@@ -1,0 +1,12 @@
+[workspace]
+resolver = "2"
+members = [
+    "raamattu",
+    "raamattu-db",
+]
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = 3

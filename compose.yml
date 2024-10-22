@@ -1,0 +1,46 @@
+
+services:
+
+  raamattu:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - RAAMATTU_PG=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+    develop:
+      watch:
+        - action: rebuild
+          path: "./raamattu"
+        - action: rebuild
+          path: "./raamattu-db"
+
+  postgres:
+    image: postgres:17.0
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "PGPASSWORD=${POSTGRES_PASSWORD} pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 60s
+      retries: 15
+      start_period: 5s
+
+  migration:
+    build:
+      dockerfile: migrate.Dockerfile
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    restart: no
+    depends_on:
+      postgres:
+        condition: service_healthy
