@@ -1,7 +1,9 @@
 use std::ops::{Range, RangeFrom, RangeInclusive};
 use serde::{Deserialize, Serialize};
 use serde_json;
+use sqlx::FromRow;
 
+/// This is the enum in postgres for translation language
 #[derive(Debug, sqlx::Type, Serialize, PartialEq, Eq)]
 #[sqlx(type_name = "lang", rename_all = "lowercase")]
 enum Lang {
@@ -10,7 +12,8 @@ enum Lang {
     En,
 }
 
-#[derive(sqlx::FromRow, Debug, PartialEq, Eq, Serialize)]
+/// Book data. This is used by the front page template.
+#[derive(FromRow, Debug, PartialEq, Eq, Serialize)]
 pub struct Book {
     pub book_id: i32,
     pub book_color: String,
@@ -19,6 +22,18 @@ pub struct Book {
     pub language: Lang,
     pub translation: String,
     pub translation_description: String,
+}
+
+/// Chapter count for a book. This is used by the chapter numbers template.
+#[derive(FromRow, Debug, PartialEq, Eq, Serialize)]
+pub struct NumChapters {
+    pub book_id: i32,
+    pub full_name: String,
+    pub short_name: String,
+    pub lang: Lang,
+    pub translation: String,
+    pub translation_description: String,
+    pub num_chapters: i32,
 }
 
 /// This identifies a verse or range of verses from the Bible.

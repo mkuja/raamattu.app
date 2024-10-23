@@ -15,7 +15,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - RAAMATTU_PG=postgresql://${POSTGRES_USER_DEV}:${POSTGRES_PASSWORD_DEV}@postgres/${POSTGRES_DB_DEV}
+      - RAAMATTU_PG=postgresql://${POSTGRES_USER_DEV}:${POSTGRES_PASSWORD_DEV}@postgres-dev/${POSTGRES_DB_DEV}
     depends_on:
       postgres-dev:
         condition: service_healthy
@@ -36,7 +36,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - RAAMATTU_PG=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
+      - RAAMATTU_PG=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres-prod/${POSTGRES_DB}
     depends_on:
       postgres-prod:
         condition: service_healthy
@@ -50,6 +50,8 @@ services:
     profiles:
       - dev
     restart: always
+    volumes:
+      - raamattuapp-data-dev:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -93,6 +95,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER_DEV}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_DEV}
       - POSTGRES_DB=${POSTGRES_DB_DEV}
+      - PG_HOST=postgres-dev
+
     restart: no
     depends_on:
       postgres-dev:
@@ -108,7 +112,11 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+      - PG_HOST=postgres-prod
     restart: no
     depends_on:
       postgres-prod:
         condition: service_healthy
+
+volumes:
+  raamattuapp-data-dev:
