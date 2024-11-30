@@ -74,5 +74,5 @@ const hideMenu = (event) => {
     document.removeEventListener("click", hideMenu)
     versesElement.addEventListener("contextmenu", showMenu)
 }
-versesElement.addEventListener("contextmenu", showMenu)
+versesElement?.addEventListener("contextmenu", showMenu)
 

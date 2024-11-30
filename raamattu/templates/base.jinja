@@ -6,6 +6,12 @@
         <title>{{ "bible"|localise(language) }} | {% block title %}{{ "title"|localise(language) }}{% endblock %}</title>
         <link rel="stylesheet" href="/static/styles.css" />
         <script src="/static/script.js" defer></script>
+        <script>
+            const selectLanguage = () => {
+                console.log(window.location.pathname)
+                //window.location.href = `${window.location.protocol}//${window.location.host}`
+            }
+        </script>
     </head>
     <body>
         <div id="container">
@@ -14,6 +20,10 @@
                     <input type="text" name="search" placeholder="{{"search_placeholder"|localise(language)}}" />
                     <input type="submit" value="{{ "search"|localise(language) }}">
                 </form>
+                <select name="language" id="language" onchange="selectLanguage">
+                    <option value="fi" {% if language == "fi" %}selected{% endif %}>Suomi</option>
+                    <option value="en" {% if language == "en" %}selected{% endif %}>English</option>
+                </select>
             </div>
             {% block body %}{% endblock %}
         </div>
