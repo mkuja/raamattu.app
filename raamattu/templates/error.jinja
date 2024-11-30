@@ -1,0 +1,8 @@
+{% extends "base.jinja" %}
+
+{% block title %}{{ "error"|localise(language) }} { code }{% endblock %}
+
+{% block body %}
+    <h1>{ code }</h1>
+    <p>{ message }</p>
+{% endblock %}

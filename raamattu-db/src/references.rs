@@ -1,6 +1,6 @@
 use std::ops::RangeInclusive;
 use unicode_segmentation::UnicodeSegmentation;
-use itertools::{ChunkBy, Itertools};
+use itertools::{Itertools};
 use crate::error::Error;
 use crate::error::Result;
 use crate::types::{BibleReference, Book};
@@ -15,7 +15,7 @@ impl BibleReference {
     /// with specified `Verse`s in it, or `None` in case of invalid reference.
     ///
     /// Book names are `Translation` specific.
-    pub async fn get_by_bible_reference(&self, translation_name: &str, reference: &str) -> Option<Book> {
+    pub async fn get_by_bible_reference(&self, _translation_name: &str, reference: &str) -> Option<Book> {
         let possibly_reference_values = Self::try_parse_bible_reference(reference);
         if let Ok(reference_values) = possibly_reference_values {}
         return None;

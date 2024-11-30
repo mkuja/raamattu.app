@@ -1,9 +1,10 @@
 use askama::Template;
-use axum::extract::{Query, State};
+use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::Html;
+use serde::Deserialize;
 use crate::application_state::ApplicationState;
-use crate::query_params::FrontPageQueryParams;
+use crate::error::Result;
 
 #[derive(Template)]
 #[template(path = "front_page.jinja")]
@@ -12,32 +13,33 @@ pub struct FrontPageTemplate {
     pub translation: String,
 }
 
-#[axum::debug_handler]
+#[derive(Deserialize)]
+pub struct FrontPagePathParam {
+    pub value: String,
+}
+
+pub struct InvalidTranslation;
+
 pub async fn frontpage_handler(
     State(app_state): State<ApplicationState>,
-    Query(qp): Query<FrontPageQueryParams>,
-) -> Result<Html<String>, StatusCode> {
-    let translation;
-    let books = if let Some(t) = qp.tr.clone() {
-        translation = t;
-        app_state
-            .pg_client
-            .fetch_books(&translation)
-    } else {
-        translation = "kr38".to_string();  // Default, if none was provided.
-        app_state
-            .pg_client
-            .fetch_books("kr38")
-    }.await;
-    if let Ok(books) = books {
-        println!("OK");
-        Ok(Html(FrontPageTemplate {
-            books,
-            translation,
-        }.render().unwrap()))
-    } else {
-        println!("Teapot");
-        Err(StatusCode::INTERNAL_SERVER_ERROR)
+    Path(params): Path<Vec<String>>,
+) -> Result<Html<String>> {
+
+    let books = app_state
+        .pg_client
+        .fetch_books(&params.get(1)
+            .unwrap_or(&"kr38".to_string()))
+            .await
+            .unwrap();
+    
+    let rendered = Ok(Html(FrontPageTemplate {
+        books,
+        translation: params.get(0).unwrap_or(&"kr38".to_string()).into()
+    }.render().unwrap()));
+    
+    match rendered {
+        Ok(page) => Ok(page),
+        Err(_why) => Err(StatusCode::NOT_FOUND),
     }
 }
 

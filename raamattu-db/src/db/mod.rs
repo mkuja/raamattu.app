@@ -1,5 +1,4 @@
 mod client;
-mod books;
+pub mod books;
 
 pub use client::Client;
-pub use books

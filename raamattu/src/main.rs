@@ -3,24 +3,24 @@ mod templates;
 // mod search;  // TODO: Laita tantivy päälle kunhan etusivu toimii
 mod application_state;
 mod sitemap;
-mod error;
-mod query_params;
+mod handlers;
+mod database;
+mod utility;
 
-use axum::extract::State;
-use axum::http::StatusCode;
-use std::sync::Arc;
-use tantivy::{Index, IndexReader};
-use axum::{routing::get, Router, response::Html};
+use axum::{routing::get, Router};
 use sqlx::{FromRow};
 use askama::Template;
-use tower_http::follow_redirect::policy::PolicyExt;
+use axum::response::Redirect;
+use rust_i18n::i18n;
 use application_state::ApplicationState;
-use error::{Error, Result};
+use crate::handlers::about::about_page;
+
+i18n!("locales", fallback = "en");
 
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let conn_str = std::env::var("RAAMATTU_PG")?;
-    let client = raamattu_db::client::Client::new(&conn_str)
+    let client = database::db::Client::new(&conn_str)
         .await?;
 
     // Prepare searches with Tantivy.
@@ -32,16 +32,17 @@ async fn main() -> Result<()> {
     // generate_sitemap(&mut conn).await;
     // drop(conn);
 
-    let mut app_state = ApplicationState {
+    let app_state = ApplicationState {
         pg_client: client,
         // index,
         // reader
     };
-
+    
     let app = Router::new()
-        .route("/", get(templates::frontpage::frontpage_handler))
+        .route("/", get(|| async { Redirect::temporary("/en/kr38") }))
+        .route("/:lang/:trans", get(handlers::front_page::front_page_handler))
         // .route("/search", get(search::search_route))
-        // .route("/about", get(about))
+        .route("/:lang/about", get(about_page))
         // .route("/search-help", get(search_help))
         // .route(
         //     "/books/:short_name",
@@ -66,18 +67,7 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-// #[derive(Template)]
-// #[template(path="about.jinja")]
-// struct About{}
-// async fn about() -> Result<Html<String>, (StatusCode, String)> {
-//     Ok(Html(About{}.render().unwrap()))
-// }
 
-#[derive(Template, FromRow)]
-#[template(path="search_help.jinja")]
-pub struct SearchHelp{
-    pub bible_books: Vec<(String, String)>,
-}
 
 // async fn search_help(State(state): State<ApplicationState>) -> Result<Html<String>, (axum::http::StatusCode, String)> {
 //     let mut conn = state.pool.acquire().await.unwrap();

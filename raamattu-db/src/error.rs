@@ -1,5 +1,5 @@
 use std::error;
-use std::fmt::{Display, Formatter, Write};
+use std::fmt::{Display, Formatter};
 
 /// Error encapsulates all errors for the raamattu-db library.
 #[derive(Debug)]

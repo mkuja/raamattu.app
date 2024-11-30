@@ -1,18 +1,12 @@
-use sqlx::{PgPool, Row};
+use anyhow::bail;
 use sqlx::postgres::PgPoolOptions;
-use crate::error::Result;
-use crate::types::{BooksJoinRecord, TranslationRecord, VerseTextsViewRecord};
-
-
-#[derive(Clone)]
-pub struct Client {
-    pub connection_pool: PgPool,
-}
-
+use sqlx::Row;
+use crate::database::db::Client;
+use crate::database::types::{Book, BooksJoinRecord, TranslationRecord, VerseTextsViewRecord};
 
 impl Client {
     /// Connect to PostgreSQL at `url`, and return new `Client` or error.
-    pub async fn new(url: &str) -> Result<Client> {
+    pub async fn new(url: &str) -> Result<Client, anyhow::Error> {
         let opts = PgPoolOptions::new()
             .max_connections(5);
         Ok(Client {
@@ -37,7 +31,7 @@ impl Client {
         chapter: i16,
         from_verse: i16,
         to_verse: i16,
-    ) -> Result<Vec<VerseTextsViewRecord>> {
+    ) -> Result<Vec<VerseTextsViewRecord>, anyhow::Error> {
         let records = sqlx::query_as(
             "SELECT
                 language,
@@ -64,7 +58,7 @@ impl Client {
 
 
     /// Fetch list of Bible translations in the database.
-    pub async fn fetch_translations(&self) -> Result<Vec<TranslationRecord>> {
+    pub async fn fetch_translations(&self) -> Result<Vec<TranslationRecord>, anyhow::Error> {
         let records = sqlx::query_as(
             "SELECT id, language, description, name FROM translations")
             .fetch_all(&self.connection_pool)
@@ -74,7 +68,7 @@ impl Client {
 
 
     /// Fetch list of books
-    pub async fn fetch_books_of_translation(&self, language: &str) -> Result<Vec<BooksJoinRecord>> {
+    pub async fn fetch_books_of_translation(&self, language: &str) -> Result<Vec<BooksJoinRecord>, anyhow::Error> {
         let records = sqlx::query_as(
             "SELECT
             language, short_name, full_name, book_id, color FROM books b JOIN book_name bn
@@ -87,7 +81,7 @@ impl Client {
 
 
     /// Fetch number of chapters in a book.
-    pub async fn fetch_chapter_count(&self, short_book_name: &str) -> Result<i32> {
+    pub async fn fetch_chapter_count(&self, short_book_name: &str) -> Result<i32, anyhow::Error> {
         let count = sqlx::query(  // Todo: Fixaa parempi query tähän
                                   "SELECT MAX(chapter_number) FROM verse_texts WHERE short_book_name=$1 LIMIT 1")
             .bind(short_book_name)
@@ -105,7 +99,7 @@ impl Client {
     /// - `chapter_number` is the chapter number. Number of chapters can be found using the `fetch_chapter_count(..)` -method.
     pub async fn fetch_verse_count(
         &self, translation: &str, short_book_name: &str, chapter_number: i16,
-    ) -> Result<i32> {
+    ) -> Result<i32, anyhow::Error> {
         let count = sqlx::query(
             "SELECT max(verse_number) FROM verse_texts WHERE translation_name=$1 AND short_book_name=$2 AND chapter_number=$3"
         ).bind(translation)
@@ -115,4 +109,20 @@ impl Client {
             .await?;
         Ok(count.try_get(0)?)
     }
+    
+    pub async fn fetch_books(&self, translation: &str) -> Result<Vec<Book>, anyhow::Error> {
+        let result = sqlx::query_as(
+            r#"SELECT book_id, book_color, short_name, full_name, language, translation, translation_description
+                    FROM books_view WHERE translation=$1"#)
+            .bind(translation)
+            .fetch_all(&self.connection_pool)
+            .await;
+        if let Ok(result) = result {
+            Ok(result)
+        } else {
+            bail!("cannot fetch books from database: {}", result.unwrap_err().to_string())
+        }
+    }
 }
+
+
