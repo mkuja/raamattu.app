@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    @font-face {
+        src: url("GreyQo-Regular.ttf");
+        font-family: GreyQo;
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+    }
+}
+
+/*@font-face {*/
+/*    font-family: roboto;*/
+/*    src: url("/static/fonts/roboto/Roboto-Medium.ttf");*/
+/*}*/
+/*@font-face {*/
+/*    font-family: robotoi;*/
+/*    src: url("/static/fonts/roboto/Roboto-ThinItalic.ttf");*/
+/*}*/
