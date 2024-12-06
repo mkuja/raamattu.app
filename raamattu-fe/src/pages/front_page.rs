@@ -6,6 +6,7 @@ pub fn front_page() -> Html {
     html! {
         <div class="container mx-auto container-lg px-8 flex flex-nowrap flex-col items-center justify-center">
             <Title title="Raamattu" />
+            <Options />
             <SearchBar placeholder="Search text..." button_text="Search" />
             <LinkButtonContainer>
                 <LinkButton text="Matteuksen evankeliumi" />
