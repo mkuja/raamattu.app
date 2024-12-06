@@ -3,4 +3,5 @@
 raamattu-ide
 target
 .env
+node_modules*
 

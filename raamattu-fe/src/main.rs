@@ -1,14 +1,13 @@
+use yew::prelude::*;
+
 mod components;
 mod pages;
-
-use yew::prelude::*;
+use crate::pages::*;
 
 #[function_component(App)]
 fn app() -> Html {
     html! {
-        <p class="text-6xl font-cursive">
-            {"lala"}
-        </p>
+        <FrontPage />
     }
 }
 
