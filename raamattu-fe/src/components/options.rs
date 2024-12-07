@@ -9,7 +9,7 @@ pub fn options() -> Html {
         DropDownMenuItem::new("en", "English"),
     ];
 
-    html!{
+    html! {
         <div class="mb-4">
             <DropDown name="lang" id="lang" items={items} />
         </div>

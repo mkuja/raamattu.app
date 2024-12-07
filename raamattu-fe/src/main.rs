@@ -1,29 +1,24 @@
-use yew::prelude::*;
-
 mod components;
+mod context;
 mod pages;
+use std::{cell::RefCell, rc::Rc};
+
 use crate::pages::*;
-
-#[derive(PartialEq, Clone)]
-struct ApplicationOptions {
-    /// Possible values are `"fi"` for Finnish and `"en"` for English.
-    language: AttrValue,
-}
-
+use context::ApplicationOptions;
+use yew::prelude::*;
 
 #[function_component(App)]
 fn app() -> Html {
-    let options_ctx = use_state(|| {
-        ApplicationOptions{language: "en".into()}
+    let options_ctx = use_state(|| ApplicationOptions {
+        language: "en".into(),
     });
 
     html! {
-        <ContextProvider<ApplicationOptions> context={(*options_ctx).clone()}>
+        <ContextProvider<UseStateHandle<ApplicationOptions>> context={options_ctx}>
             <FrontPage />
-        </ContextProvider<ApplicationOptions>>
+        </ContextProvider<UseStateHandle<ApplicationOptions>>>
     }
 }
-
 
 fn main() {
     yew::Renderer::<App>::new().render();
