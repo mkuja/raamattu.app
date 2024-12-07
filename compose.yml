@@ -8,7 +8,7 @@ services:
 
   # Dev and prod profiles have different environment vars, and refer to
   # different services.
-  raamattu-dev:
+  raamattu-backend:
     build: .
     profiles:
       - dev
@@ -17,35 +17,17 @@ services:
     environment:
       - RAAMATTU_PG=postgresql://${POSTGRES_USER_DEV}:${POSTGRES_PASSWORD_DEV}@postgres-dev/${POSTGRES_DB_DEV}
     depends_on:
-      postgres-dev:
+      postgres:
         condition: service_healthy
       migration-dev:
         condition: service_completed_successfully
     develop:
       watch:
         - action: rebuild
-          path: "./raamattu"
-        - action: rebuild
-          path: "./raamattu-db"
-
-  # Production profile for the main service.
-  raamattu-prod:
-    build: .
-    profiles:
-      - prod
-    ports:
-      - "3000:3000"
-    environment:
-      - RAAMATTU_PG=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres-prod/${POSTGRES_DB}
-    depends_on:
-      postgres-prod:
-        condition: service_healthy
-      migration-prod:
-        condition: service_completed_successfully
-
+          path: "./raamattu-be"
 
   # Dev profile exposes 5432 for direct tampering of database and lacks a volume
-  postgres-dev:
+  postgres:
     image: postgres:17.0
     profiles:
       - dev
@@ -65,28 +47,8 @@ services:
       retries: 15
       start_period: 3s
 
-  # Postgres production profile
-  postgres-prod:
-    image: postgres:17.0
-    profiles:
-      - prod
-    restart: always
-    volumes:
-      - raamattuapp-data-prod:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-    healthcheck:
-      test: ["CMD-SHELL", "PGPASSWORD=${POSTGRES_PASSWORD} pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 60s
-      retries: 15
-      start_period: 5s
-
-
   # Initialize database with the schema with development connection settings.
-  migration-dev:
+  migration:
     build:
       dockerfile: migrate.Dockerfile
     profiles:
@@ -96,26 +58,9 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_DEV}
       - POSTGRES_DB=${POSTGRES_DB_DEV}
       - PG_HOST=postgres-dev
-
     restart: no
     depends_on:
-      postgres-dev:
-        condition: service_healthy
-
-  # Same with the production settings.
-  migration-prod:
-    build:
-      dockerfile: migrate.Dockerfile
-    profiles:
-      - prod
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - PG_HOST=postgres-prod
-    restart: no
-    depends_on:
-      postgres-prod:
+      postgres:
         condition: service_healthy
 
 volumes:
