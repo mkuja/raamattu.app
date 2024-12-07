@@ -8,7 +8,6 @@ impl Default for ApplicationOptions {
     fn default() -> Self {
         Self {
             language: "en".into(),
-            ..Default::default()
         }
     }
 }
