@@ -1,6 +1,4 @@
-use std::borrow::Borrow;
-
-use web_sys::{self, wasm_bindgen::JsCast, HtmlElement, HtmlSelectElement};
+use web_sys::{self, wasm_bindgen::JsCast, HtmlSelectElement};
 use yew::prelude::*;
 
 use crate::context::ApplicationOptions;
@@ -41,7 +39,7 @@ pub fn drop_down(props: &DropDownProps) -> Html {
     let ctx = use_context::<UseStateHandle<ApplicationOptions>>();
 
     let onchange = Callback::from(move |ev: Event| {
-        let mut lang = ev
+        let lang = ev
             .target()
             .unwrap()
             .dyn_into::<HtmlSelectElement>()
@@ -52,7 +50,7 @@ pub fn drop_down(props: &DropDownProps) -> Html {
             language: lang,
             ..*ctx.clone().unwrap()
         };
-        &ctx.as_ref().unwrap().set(new_ctx);
+        ctx.as_ref().unwrap().set(new_ctx);
     });
 
     html! {

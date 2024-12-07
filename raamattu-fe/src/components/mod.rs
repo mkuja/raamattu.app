@@ -6,7 +6,7 @@ mod options;
 mod search_bar;
 mod title;
 
-pub use button::*;
+// unused currently. pub use button::*;
 pub use dropdown::*;
 pub use link_button::*;
 pub use link_button_container::*;

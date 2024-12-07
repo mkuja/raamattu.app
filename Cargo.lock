@@ -2480,6 +2480,7 @@ dependencies = [
 name = "raamattu-fe"
 version = "0.1.0"
 dependencies = [
+ "rust-i18n",
  "web-sys",
  "yew 0.21.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "yew-router",

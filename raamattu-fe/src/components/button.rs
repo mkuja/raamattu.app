@@ -3,7 +3,9 @@ use yew::prelude::*;
 #[derive(PartialEq)]
 pub enum ButtonType {
     Primary,
+    #[allow(unused)]
     Secondary,
+    #[allow(unused)]
     Inactive,
 }
 
