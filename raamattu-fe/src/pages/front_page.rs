@@ -6,7 +6,7 @@ pub fn front_page() -> Html {
     let ctx = use_context::<UseStateHandle<ApplicationOptions>>();
     let ao = ctx.unwrap();
     let lang = &ao.language;
-    
+
     let title = use_translation("site_title");
 
     html! {

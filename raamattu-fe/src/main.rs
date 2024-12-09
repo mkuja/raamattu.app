@@ -1,14 +1,14 @@
 mod components;
 mod context;
-mod pages;
 mod hooks;
+mod pages;
 
 use crate::pages::*;
 use context::ApplicationOptions;
-use yew::prelude::*;
 use rust_i18n::i18n;
+use yew::prelude::*;
 
-i18n!("locales", fallback="en");
+i18n!("locales", fallback = "en");
 
 #[function_component(App)]
 fn app() -> Html {

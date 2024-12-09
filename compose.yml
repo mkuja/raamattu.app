@@ -1,39 +1,27 @@
-# See file example.env for mandatory credentials settings and create your own .env file.
-# This file has two profiles to choose from: dev or prod
-
-# To run, use command `docker compose --profile dev up --watch`.
-# I don't know why I added the production profile, lol. Maybe I can use it, so it can stay.
 
 services:
 
-  # Dev and prod profiles have different environment vars, and refer to
-  # different services.
-  raamattu-backend:
+  raamattu-be:
     build: .
-    profiles:
-      - dev
     ports:
       - "3000:3000"
     environment:
-      - RAAMATTU_PG=postgresql://${POSTGRES_USER_DEV}:${POSTGRES_PASSWORD_DEV}@postgres-dev/${POSTGRES_DB_DEV}
+      - RAAMATTU_PG=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
     depends_on:
       postgres:
         condition: service_healthy
-      migration-dev:
+      migration:
         condition: service_completed_successfully
     develop:
       watch:
         - action: rebuild
           path: "./raamattu-be"
 
-  # Dev profile exposes 5432 for direct tampering of database and lacks a volume
   postgres:
     image: postgres:17.0
-    profiles:
-      - dev
     restart: always
     volumes:
-      - raamattuapp-data-dev:/var/lib/postgresql/data
+      - raamattuapp-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -47,21 +35,18 @@ services:
       retries: 15
       start_period: 3s
 
-  # Initialize database with the schema with development connection settings.
   migration:
     build:
       dockerfile: migrate.Dockerfile
-    profiles:
-      - dev
     environment:
-      - POSTGRES_USER=${POSTGRES_USER_DEV}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_DEV}
-      - POSTGRES_DB=${POSTGRES_DB_DEV}
-      - PG_HOST=postgres-dev
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - PG_HOST=postgres
     restart: no
     depends_on:
       postgres:
         condition: service_healthy
 
 volumes:
-  raamattuapp-data-dev:
+  raamattuapp-data:

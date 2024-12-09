@@ -67,7 +67,7 @@ impl Client {
     }
 
 
-    /// Fetch list of books
+   /// Fetch list of books
     pub async fn fetch_books_of_translation(&self, language: &str) -> Result<Vec<BooksJoinRecord>, anyhow::Error> {
         let records = sqlx::query_as(
             "SELECT

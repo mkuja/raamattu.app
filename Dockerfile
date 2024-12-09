@@ -1,4 +1,4 @@
-FROM lukemathwalker/cargo-chef:0.1.68-rust-1-slim-bookworm AS base
+FROM lukemathwalker/cargo-chef:0.1.68-rust-1.83.0-slim-bookworm AS base
 WORKDIR /app
 
 FROM base AS recipe
@@ -10,13 +10,13 @@ WORKDIR /build
 COPY --from=recipe /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 COPY . .
-RUN cargo build --bins --release
+RUN cargo build --bin raamattu-be --release
 
 FROM debian:bookworm-slim AS deploy
 WORKDIR /app
-COPY --from=build /build/target/release/raamattu .
-COPY --from=build /build/raamattu/static static
+COPY --from=build /build/target/release/raamattu-be .
+# COPY --from=build /build/raamattu/static static
 EXPOSE 3000
-CMD /app/raamattu
+CMD /app/raamattu-be
 
 # vim: et ts=4 sw=4
