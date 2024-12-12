@@ -4,7 +4,15 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-yew = {version = "0.21.0", features = ["csr"]}
+yew = { version = "*", features = ["csr"] }
 yew-router = { git = "https://github.com/yewstack/yew.git" }
-web-sys ={ version = "0.3", features = ["HtmlSelectElement", "HtmlOptionElement", "Event"]}
+web-sys = { version = "0.3", features = [
+  "HtmlSelectElement",
+  "HtmlOptionElement",
+  "Event",
+] }
 rust-i18n = "3.1.2"
+serde = { version = "1", features = ["default", "derive", "std"] }
+serde_json = { version = "*" }
+gloo-net = { version = "*", features = ["http", "serde_json"] }
+wasm-bindgen-futures = "0.4"

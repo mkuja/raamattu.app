@@ -1,3 +1,4 @@
+mod book_list;
 mod button;
 mod dropdown;
 mod link_button;
@@ -7,9 +8,12 @@ mod search_bar;
 mod title;
 
 // unused currently. pub use button::*;
+#[allow(unused)]
+pub use book_list::*;
 pub use dropdown::*;
-pub use link_button::*;
-pub use link_button_container::*;
+#[allow(unused)]
+pub use link_button::{LinkButton, LinkButtonProps};
+pub use link_button_container::LinkButtonContainer;
 pub use options::*;
 pub use search_bar::*;
 pub use title::*;

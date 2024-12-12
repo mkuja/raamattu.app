@@ -1,5 +1,6 @@
 mod components;
 mod context;
+mod error;
 mod hooks;
 mod pages;
 
@@ -13,7 +14,7 @@ i18n!("locales", fallback = "en");
 #[function_component(App)]
 fn app() -> Html {
     let options_ctx = use_state(|| ApplicationOptions {
-        language: "en".into(),
+        ..ApplicationOptions::default()
     });
 
     html! {

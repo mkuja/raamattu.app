@@ -7,7 +7,14 @@ use yew::prelude::*;
 pub struct LinkButtonProps {
     pub text: AttrValue,
 }
+impl LinkButtonProps {
+    pub fn new(text: AttrValue) -> Self {
+        Self { text }
+    }
+}
 
+/// Props:
+///     text: AttrValue
 #[function_component(LinkButton)]
 pub fn link_button(props: &LinkButtonProps) -> Html {
     html! {

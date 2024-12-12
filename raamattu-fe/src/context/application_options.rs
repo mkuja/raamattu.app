@@ -1,13 +1,20 @@
+use std::env::var;
+
 #[derive(PartialEq, Clone)]
 pub struct ApplicationOptions {
     /// Possible values are `"fi"` for Finnish and `"en"` for English.
     pub language: String,
+    pub translation: String,
+    pub backend_base_url: String,
 }
 
 impl Default for ApplicationOptions {
     fn default() -> Self {
         Self {
             language: "en".into(),
+            translation: "web".into(),
+            backend_base_url: var("RAAMATTU_BACKEND_URL")
+                .unwrap_or("http://localhost:3000".to_string()),
         }
     }
 }

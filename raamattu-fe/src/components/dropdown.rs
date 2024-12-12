@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use web_sys::{self, wasm_bindgen::JsCast, HtmlSelectElement};
 use yew::prelude::*;
 
@@ -48,7 +50,7 @@ pub fn drop_down(props: &DropDownProps) -> Html {
             .value();
         let new_ctx = ApplicationOptions {
             language: lang,
-            ..*ctx.clone().unwrap()
+            ..ctx.as_ref().unwrap().deref().clone()
         };
         ctx.as_ref().unwrap().set(new_ctx);
     });
