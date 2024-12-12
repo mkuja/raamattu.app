@@ -2,8 +2,7 @@ use serde::Serialize;
 use sqlx::prelude::FromRow;
 use std::error::Error;
 
-use crate::{error::LanguageError, BackendState};
-use super::Language;
+use crate::BackendState;
 
 #[derive(Serialize, FromRow)]
 pub struct Book {
@@ -13,7 +12,7 @@ pub struct Book {
     full_name: String,
     language: String,
     translation: String,
-    translation_description: String
+    translation_description: String,
 }
 
 pub trait AbleToListBooks {
@@ -35,7 +34,7 @@ impl AbleToListBooks for BackendState {
         .await;
         match records {
             Ok(x) => Ok(x),
-            Err(x) => Err(Box::new(x))
+            Err(x) => Err(Box::new(x)),
         }
     }
 }

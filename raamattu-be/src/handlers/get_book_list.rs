@@ -1,5 +1,9 @@
 use crate::{database::Book, BackendState};
-use axum::{extract::{Path, State}, http::StatusCode, Json};
+use axum::{
+    extract::{Path, State},
+    http::StatusCode,
+    Json,
+};
 
 use crate::database::*;
 
@@ -16,5 +20,4 @@ pub async fn get_book_list(
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
     }
-
 }

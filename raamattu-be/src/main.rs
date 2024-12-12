@@ -5,19 +5,19 @@ mod state;
 
 use axum::routing::get;
 use axum::Router;
-use state::*;
 use handlers::get_book_list;
+use state::*;
 
 #[tokio::main]
 async fn main() {
     let conn_str = std::env::var("RAAMATTU_PG");
     if conn_str.is_err() {
-        return
+        return;
     }
 
     let app = Router::new()
         .route("/", get(|| async { "Hello" }))
-        .route("/:translation/book-list", get(get_book_list))
+        .route("/book-list/by-translation/:translation", get(get_book_list))
         .with_state(BackendState::new(conn_str.unwrap().as_str()).await);
 
     // run our app with hyper, listening globally on port 3000
