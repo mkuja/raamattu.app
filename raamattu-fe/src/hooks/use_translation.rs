@@ -20,6 +20,9 @@ impl<'a> Translation {
     }
 }
 
+/// Get and fetch i18n translation tokens for different languages.
+///
+/// This hook is not for getting Bible translations.
 #[hook]
 pub fn use_translation(token: &'static str) -> UseStateHandle<Translation> {
     let context = use_context::<UseStateHandle<ApplicationOptions>>();

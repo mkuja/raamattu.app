@@ -14,6 +14,7 @@ pub use book_list::*;
 pub use dropdown::*;
 #[allow(unused)]
 pub use link_button::{LinkButton, LinkButtonProps};
+#[allow(unused)]
 pub use link_button_container::{LinkButtonContainer, LinkButtonContainerProps};
 pub use options::*;
 pub use search_bar::*;
