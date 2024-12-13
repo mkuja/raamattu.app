@@ -8,12 +8,13 @@ pub fn front_page() -> Html {
     let lang = &ao.language;
 
     let title = use_translation("site_title");
+    let search_placeholder = use_translation("search_placeholder");
 
     html! {
         <div class="container mx-auto container-lg px-8 flex flex-nowrap flex-col items-center justify-center">
             <Title title={title.get_translation()}/>
             <Options />
-            <SearchBar placeholder="Search text..." button_text="Search" />
+            <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />
             <BookList />
             <h1>{lang}</h1>
         </div>

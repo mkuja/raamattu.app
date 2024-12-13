@@ -4,11 +4,15 @@ site_title:
   fi: Raamattu
   en: The Bible
 
-is-loading:
+is_loading:
   fi: Ladataan...
   en: Loading...
 
-server-error:
+server_error:
   fi: Virhe taustapalvelimessa.
   en: Error at the back-end server.
+
+search_placeholder:
+  fi: Etsi raamatusta...
+  en: Search from The Bible...
 
