@@ -3,11 +3,14 @@ mod context;
 mod error;
 mod hooks;
 mod pages;
+mod routes;
 
 use crate::pages::*;
+use crate::routes::*;
 use context::ApplicationOptions;
 use rust_i18n::i18n;
 use yew::prelude::*;
+use yew_router::prelude::*;
 
 i18n!("locales", fallback = "en");
 
@@ -21,7 +24,9 @@ fn app() -> Html {
 
     html! {
         <ContextProvider<UseStateHandle<ApplicationOptions>> context={options_ctx}>
-            <FrontPage />
+            <BrowserRouter>
+                <Switch<Routes> render={switch} />
+            </BrowserRouter>
         </ContextProvider<UseStateHandle<ApplicationOptions>>>
     }
 }
