@@ -13,8 +13,8 @@ pub struct LinkButtonProps {
 #[function_component(LinkButton)]
 pub fn link_button(props: &LinkButtonProps) -> Html {
     html! {
-        <div class="py-2 px-4 border-2 rounded-md border-rim hover:bg-hilight">
-            {&props.text}
+        <div class="flex justify-center items-center text-center py-2 px-4 border-2 rounded-md border-rim hover:bg-hilight">
+                {&props.text}
         </div>
     }
 }
