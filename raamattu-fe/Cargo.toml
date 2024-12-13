@@ -16,3 +16,6 @@ serde = { version = "1", features = ["default", "derive", "std"] }
 serde_json = { version = "*" }
 gloo-net = { version = "*", features = ["http", "serde_json"] }
 wasm-bindgen-futures = "0.4"
+wasm-logger = "*"
+log = "*"
+wasm-bindgen = "*"

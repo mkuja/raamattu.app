@@ -13,6 +13,8 @@ i18n!("locales", fallback = "en");
 
 #[function_component(App)]
 fn app() -> Html {
+    wasm_logger::init(wasm_logger::Config::default());
+
     let options_ctx = use_state(|| ApplicationOptions {
         ..ApplicationOptions::default()
     });

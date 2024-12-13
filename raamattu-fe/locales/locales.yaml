@@ -3,3 +3,12 @@ _version: 2
 site_title:
   fi: Raamattu
   en: The Bible
+
+is-loading:
+  fi: Ladataan...
+  en: Loading...
+
+server-error:
+  fi: Virhe taustapalvelimessa.
+  en: Error at the back-end server.
+

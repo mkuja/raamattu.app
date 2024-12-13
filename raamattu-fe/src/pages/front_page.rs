@@ -14,25 +14,7 @@ pub fn front_page() -> Html {
             <Title title={title.get_translation()}/>
             <Options />
             <SearchBar placeholder="Search text..." button_text="Search" />
-            <LinkButtonContainer>
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen" />
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen evankeliumi" />
-                <LinkButton text="Matteuksen evankeliumi" />
-            </LinkButtonContainer>
+            <BookList />
             <h1>{lang}</h1>
         </div>
     }
