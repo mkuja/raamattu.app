@@ -1,9 +1,4 @@
-use std::ops::Deref;
-
-use web_sys::{self, wasm_bindgen::JsCast, HtmlSelectElement};
 use yew::prelude::*;
-
-use crate::context::ApplicationOptions;
 
 /**
  * A Vec of these must be provided for DropDown in props `items`
@@ -31,6 +26,7 @@ pub struct DropDownProps {
     pub items: Vec<DropDownMenuItem>,
     pub name: AttrValue,
     pub id: AttrValue,
+    pub on_change: Callback<Event>,
 }
 
 #[function_component(DropDown)]
@@ -38,25 +34,8 @@ pub struct DropDownProps {
  * Also import `DropDownMenuItem` to use with this component.
  */
 pub fn drop_down(props: &DropDownProps) -> Html {
-    let ctx = use_context::<UseStateHandle<ApplicationOptions>>();
-
-    let onchange = Callback::from(move |ev: Event| {
-        let lang = ev
-            .target()
-            .unwrap()
-            .dyn_into::<HtmlSelectElement>()
-            .ok()
-            .unwrap()
-            .value();
-        let new_ctx = ApplicationOptions {
-            language: lang,
-            ..ctx.as_ref().unwrap().deref().clone()
-        };
-        ctx.as_ref().unwrap().set(new_ctx);
-    });
-
     html! {
-        <select class="p-1 bg-secondary border-2 border-rim rounded-md" name={&props.name} id={&props.id} {onchange}>
+        <select class="p-1 bg-secondary border-2 border-rim rounded-md" name={&props.name} id={&props.id} onchange={&props.on_change}>
             {for props.items.iter().map(|item| {
                 html!{
                     <option value={&item.value}>{&item.display_value}</option>
