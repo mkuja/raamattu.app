@@ -41,8 +41,8 @@ pub fn use_book_list() -> UseBookListStateVars {
 
     {
         // Make copies of the pointers for the effect
-        let returned = returned.clone();
         let ctx = ctx.clone();
+        let book_list = book_list.clone();
 
         // Run when the context changes.
         use_effect_with(ctx, move |ctx| {
@@ -50,7 +50,7 @@ pub fn use_book_list() -> UseBookListStateVars {
             let ctx = ctx.clone();
 
             spawn_local(async move {
-                returned.is_loading.set(true);
+                is_loading.set(true);
                 let book_list_json = Request::get(
                     format!(
                         "{}{}{}",
@@ -64,14 +64,14 @@ pub fn use_book_list() -> UseBookListStateVars {
                 if let Ok(ok) = book_list_json {
                     let books = ok.json::<Vec<Book>>().await;
                     if let Ok(b) = books {
-                        returned.books.set(b);
+                        book_list.set(b);
                     } else {
-                        returned.error.set(Some("json_error".to_string()));
+                        error.set(Some("json_error".to_string()));
                     }
                 } else {
-                    returned.error.set(Some("net_error".to_string()));
+                    error.set(Some("net_error".to_string()));
                 };
-                returned.is_loading.set(false);
+                is_loading.set(false);
             });
         });
     }

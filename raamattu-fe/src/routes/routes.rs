@@ -1,19 +1,21 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::FrontPage;
+use crate::{ChapterPage, FrontPage};
 
 #[derive(Clone, Routable, PartialEq)]
 pub enum Routes {
     #[at("/")]
     Root,
-    //    #[not_found]
-    //    #[at("/404")]
-    //    NotFound,
+    #[at("/:translation/:book")]
+    Chapters { translation: String, book: String },
 }
 
 pub fn switch(routes: Routes) -> Html {
     match routes {
         Routes::Root => html! { <FrontPage /> },
+        Routes::Chapters { translation, book } => {
+            html! { <ChapterPage {translation} {book} /> }
+        }
     }
 }

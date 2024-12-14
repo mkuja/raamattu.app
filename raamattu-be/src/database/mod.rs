@@ -1,6 +1,8 @@
 mod query_book_list;
+mod query_book_meta;
 
 pub use query_book_list::*;
+pub use query_book_meta::*;
 
 use crate::error::LanguageError;
 

@@ -11,7 +11,7 @@ use tower::{Service, ServiceBuilder, ServiceExt};
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 
-use handlers::get_book_list;
+use handlers::{get_book_list, get_num_chapters_for_book};
 use state::*;
 
 #[tokio::main]
@@ -32,6 +32,10 @@ async fn main() {
     let app = Router::new()
         .route("/", get(|| async { "Hello" }))
         .route("/book-list/by-translation/:translation", get(get_book_list))
+        .route(
+            "/chapter-list/:translation/:book",
+            get(get_num_chapters_for_book),
+        )
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .with_state(be_state);
