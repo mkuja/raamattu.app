@@ -1,36 +1,42 @@
-use std::{borrow::Borrow, ops::Deref};
+use std::ops::Deref;
 
 use gloo_net::http::Request;
+use log::warn;
 use serde::Deserialize;
 use yew::{platform::spawn_local, prelude::*};
 
 use crate::context::ApplicationOptions;
 
-pub struct UseBibleBookMeta {
+pub struct UseBookChapter {
     pub num_chapters: UseStateHandle<Option<i32>>,
     pub is_loading: UseStateHandle<bool>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 struct NumChapters {
     pub num_chapters: i32,
 }
 
 #[hook]
-pub fn use_book_chapter_count(book: String) -> UseBibleBookMeta {
+pub fn use_book_chapter_count(
+    translation: AttrValue,
+    book: AttrValue,
+) -> UseStateHandle<UseBookChapter> {
     let ctx = use_context::<UseStateHandle<ApplicationOptions>>().unwrap();
     let num_chps = use_state(|| None);
     let is_loading = use_state(|| false);
 
-    let returned = UseBibleBookMeta {
+    let returned = use_state(|| UseBookChapter {
         num_chapters: num_chps.clone(),
         is_loading: is_loading.clone(),
-    };
+    });
 
     use_effect(move || {
         let ctx = ctx.clone();
         let num_chps = num_chps.clone();
         let is_loading = is_loading.clone();
+        let translation = translation.clone();
+        let book = book.clone();
 
         spawn_local(async move {
             is_loading.set(true);
@@ -39,9 +45,9 @@ pub fn use_book_chapter_count(book: String) -> UseBibleBookMeta {
                     "{}{}{}{}{}",
                     ctx.deref().backend_base_url,
                     "/chapter-list/",
-                    ctx.deref().translation,
+                    &translation.to_string(),
                     "/",
-                    &book
+                    &book.to_string()
                 )
                 .as_str(),
             )

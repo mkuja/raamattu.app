@@ -25,7 +25,7 @@ fn app() -> Html {
     html! {
         <ContextProvider<UseStateHandle<ApplicationOptions>> context={options_ctx}>
             <BrowserRouter>
-                <Switch<Routes> render={switch} />
+                <Switch<Route> render={switch} />
             </BrowserRouter>
         </ContextProvider<UseStateHandle<ApplicationOptions>>>
     }

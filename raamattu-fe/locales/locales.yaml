@@ -16,3 +16,7 @@ search_placeholder:
   fi: Etsi raamatusta...
   en: Search from The Bible...
 
+invalid_book_spec:
+  fi: Kirjaa ei löydy tälle käännökselle.
+  en: Book not found for the translation.
+

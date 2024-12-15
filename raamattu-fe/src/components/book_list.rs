@@ -7,6 +7,7 @@ use crate::components::LinkButtonContainer;
 
 use crate::hooks::use_translation;
 use crate::hooks::{use_book_list, UseBookListStateVars};
+use crate::Route;
 
 #[function_component(BookList)]
 pub fn book_list() -> Html {
@@ -25,7 +26,8 @@ pub fn book_list() -> Html {
                 bks.books
                     .iter()
                     .map(|b| {
-                        html! { <LinkButton text={b.full_name.to_string()} /> }
+                        html! { <LinkButton text={b.full_name.to_string()} route={Route::Chapters {
+                        translation: b.translation.clone(), book: b.short_name.clone() }} /> }
                     })
                     .collect(),
             );
@@ -43,8 +45,7 @@ pub fn book_list() -> Html {
             } else if error.is_some() {
                 <span>{server_error_msg.get_translation()}</span>
             } else {
-                {for books.books.iter().map(|book| html! { <LinkButton text={book.full_name.to_string()} /> })
-                }
+                {for book_list.deref().into_iter().map(|b|{html!{b.clone()}})}
             }
 
         </LinkButtonContainer>
