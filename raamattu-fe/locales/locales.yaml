@@ -20,3 +20,14 @@ invalid_book_spec:
   fi: Kirjaa ei löydy tälle käännökselle.
   en: Book not found for the translation.
 
+json_error:
+  fi: Ei voitu purkaa JSONia struktuuriksi. Tämä on buki.
+  en: Could not de-serialize JSON to a structure. This is a bug.
+
+book_error:
+  fi: Kirjaa ei ole olemassa käännökselle.
+  en: Book doesn't exist for the translation.
+
+empty:
+  fi: Pitää paikkaa kieliopin helpottamiseksi. Ei näytetä missään.
+  en: Placeholder to make the code more terse and easy to read. Is never shown.

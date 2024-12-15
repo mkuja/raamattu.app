@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 /**
  * LinkButton is used for all book and chapter links on books page and chapters page.
  */
