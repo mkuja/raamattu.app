@@ -24,25 +24,11 @@ pub fn chapter_page(props: &ChapterPageProps) -> Html {
     let search_placeholder = use_translation("search_placeholder");
     let loading_msg = use_translation("is_loading");
 
-    info!(
-        "====================\n
-loading chapers page\n
-num_chapters: {}\n
-error_msg: {}\n
-is_loading: {}\n
-loading_msg: {}\n
---------------------",
-        num_chapters.unwrap_or(0),
-        error_msg.get_translation(),
-        *is_loading,
-        loading_msg.get_translation()
-    );
-
     html! {
         <div class="container mx-auto container-lg px-8 flex flex-nowrap flex-col items-center justify-center">
             <Title title={title.get_translation()}/>
             <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />
-            <LinkButtonContainer>
+            <LinkButtonContainer class="grid grid-cols-4 md:grid-cols-6 gap-4 border-2 rounded-md p-4 border-hilight mt-2">
                 if *is_loading {
                     <span>{loading_msg.get_translation()}</span>
                 } else if error.is_some() {

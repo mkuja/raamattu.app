@@ -36,9 +36,10 @@ pub fn book_list() -> Html {
 
     let loading_msg = use_translation("is_loading");
     let server_error_msg = use_translation("server_error");
+    let class: Option<String> = None;
 
     html! {
-        <LinkButtonContainer>
+        <LinkButtonContainer {class}>
 
             if *is_loading.deref() {
                 <span>{loading_msg.get_translation()}</span>
