@@ -1,7 +1,6 @@
 # Nimetön Raamattuohjelma
 
-[Tässä](https://raamattu.app/) linkki josta voi lukea raamattua ja nähdä tämän
-repon sisältämän ohjelman toiminnassa.
+A work in progress
 
 # Lisenssi
 
