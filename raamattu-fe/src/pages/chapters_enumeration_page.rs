@@ -2,7 +2,6 @@ use crate::{
     components::*,
     hooks::{use_book_chapter_count, use_translation},
 };
-use log::info;
 use yew::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]
