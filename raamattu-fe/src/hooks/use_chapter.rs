@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use gloo_net::http::Request;
 use serde::Deserialize;
 use yew::{platform::spawn_local, prelude::*};
@@ -35,7 +33,7 @@ pub fn use_chapter(
     UseStateHandle<Option<&'static str>>,
 ) {
     // Has backend url.
-    let ctx = use_context::<ApplicationOptions>().unwrap();
+    let ctx = use_context::<UseStateHandle<ApplicationOptions>>().unwrap();
 
     // Returned
     let r_chapter: UseStateHandle<Option<Chapter>> = use_state(|| None);
@@ -57,7 +55,7 @@ pub fn use_chapter(
         spawn_local(async move {
             let chapter = Request::get(
                 format!(
-                    "{}/{}/{}/{}",
+                    "{}/chapter/{}/{}/{}",
                     &ctx.backend_base_url,
                     sl_e.0.as_str(),
                     sl_e.1.as_str(),

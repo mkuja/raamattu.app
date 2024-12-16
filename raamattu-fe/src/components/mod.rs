@@ -5,6 +5,7 @@ mod link_button;
 mod link_button_container;
 mod loading_or_error;
 mod options;
+mod rim;
 mod search_bar;
 mod title;
 
@@ -17,5 +18,6 @@ pub use link_button::{LinkButton, LinkButtonProps};
 #[allow(unused)]
 pub use link_button_container::{LinkButtonContainer, LinkButtonContainerProps};
 pub use options::*;
+pub use rim::Rim;
 pub use search_bar::*;
 pub use title::*;

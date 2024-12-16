@@ -1,6 +1,8 @@
 use crate::{
     components::*,
+    context::ApplicationOptions,
     hooks::{use_book_chapter_count, use_translation},
+    Route,
 };
 use yew::prelude::*;
 
@@ -13,6 +15,8 @@ pub struct ChapterPageProps {
 /// ChapterPage takes `translation` and `book ` from props.
 #[function_component(ChapterPage)]
 pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
+    let ctx: Option<UseStateHandle<ApplicationOptions>> = use_context();
+    let ctx = ctx.unwrap();
     let chapter_count = use_book_chapter_count(props.translation.clone(), props.book.clone());
     let num_chapters = chapter_count.num_chapters.clone();
     let is_loading = chapter_count.is_loading.clone();
@@ -27,6 +31,7 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
         <div class="container mx-auto container-lg px-8 flex flex-nowrap flex-col items-center justify-center">
             <Title title={title.get_translation()}/>
             <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />
+            <Options />
             <LinkButtonContainer class="grid grid-cols-4 md:grid-cols-6 gap-4 border-2 rounded-md p-4 border-hilight mt-2">
                 if *is_loading {
                     <span>{loading_msg.get_translation()}</span>
@@ -36,7 +41,7 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
                     }}
                 } else {
                     {for (0..num_chapters.unwrap_or(0)).map(|num| {
-                        html! { <LinkButton text={format!("{}", num+1)} route={None}></LinkButton> }
+                        html! { <LinkButton text={format!("{}", num+1)} route={Route::Chapter { translation: ctx.translation.clone(), book: props.book.to_string(), chapter: (num+1).to_string() }}></LinkButton> }
                     })}
                 }
             </LinkButtonContainer>
