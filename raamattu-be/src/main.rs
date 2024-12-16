@@ -3,15 +3,13 @@ mod error;
 mod handlers;
 mod state;
 
-use axum::extract::State;
+use axum::Router;
 use axum::{http::Method, routing::get};
-use axum::{Extension, Router};
 
-use tower::{Service, ServiceBuilder, ServiceExt};
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 
-use handlers::{get_book_list, get_num_chapters_for_book};
+use handlers::{get_book_list, get_chapter_verses, get_num_chapters_for_book};
 use state::*;
 
 #[tokio::main]
@@ -35,6 +33,10 @@ async fn main() {
         .route(
             "/chapter-list/:translation/:book",
             get(get_num_chapters_for_book),
+        )
+        .route(
+            "/chapter/:translation/:book/:chapter",
+            get(get_chapter_verses),
         )
         .layer(cors)
         .layer(TraceLayer::new_for_http())

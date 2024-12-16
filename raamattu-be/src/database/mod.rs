@@ -1,8 +1,10 @@
 mod query_book_list;
 mod query_book_meta;
+mod query_verses;
 
 pub use query_book_list::*;
 pub use query_book_meta::*;
+pub use query_verses::Chapter;
 
 use crate::error::LanguageError;
 
