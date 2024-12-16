@@ -13,7 +13,7 @@ pub struct ChapterPageProps {
 
 /// ChapterPage takes `translation` and `book ` from props.
 #[function_component(ChapterPage)]
-pub fn chapter_page(props: &ChapterPageProps) -> Html {
+pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
     let chapter_count = use_book_chapter_count(props.translation.clone(), props.book.clone());
     let num_chapters = chapter_count.num_chapters.clone();
     let is_loading = chapter_count.is_loading.clone();

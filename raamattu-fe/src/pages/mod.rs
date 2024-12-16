@@ -1,4 +1,4 @@
-mod chapter_page;
+mod chapters_enumeration_page;
 mod front_page;
-pub use chapter_page::*;
+pub use chapters_enumeration_page::*;
 pub use front_page::*;
