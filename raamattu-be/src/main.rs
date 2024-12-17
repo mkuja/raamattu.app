@@ -9,7 +9,10 @@ use axum::{http::Method, routing::get};
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 
-use handlers::{get_book_list, get_chapter_verses, get_num_chapters_for_book};
+use handlers::{
+    get_alternative_translations_for_book, get_book_list, get_chapter_verses,
+    get_num_chapters_for_book,
+};
 use state::*;
 
 #[tokio::main]
@@ -37,6 +40,10 @@ async fn main() {
         .route(
             "/chapter/:translation/:book/:chapter",
             get(get_chapter_verses),
+        )
+        .route(
+            "/map-from-translation/:from_translation/:from_book",
+            get(get_alternative_translations_for_book),
         )
         .layer(cors)
         .layer(TraceLayer::new_for_http())
