@@ -42,7 +42,7 @@ async fn main() {
             get(get_chapter_verses),
         )
         .route(
-            "/map-from-translation/:from_translation/:from_book",
+            "/other-translations/:from_translation/:from_book",
             get(get_alternative_translations_for_book),
         )
         .layer(cors)

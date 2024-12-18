@@ -1,10 +1,11 @@
 use crate::{
     components::*,
     context::ApplicationOptions,
-    hooks::{use_book_chapter_count, use_translation},
+    hooks::{use_book_chapter_count, use_cross_translations, use_translation},
     Route,
 };
 use yew::prelude::*;
+use yew_router::hooks::use_route;
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct ChapterPageProps {
@@ -15,6 +16,8 @@ pub struct ChapterPageProps {
 /// ChapterPage takes `translation` and `book ` from props.
 #[function_component(ChapterPage)]
 pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
+    let alt_routes = use_cross_translations();
+    let unwrapped_alt_routes = alt_routes.as_ref().unwrap();
     let ctx: Option<UseStateHandle<ApplicationOptions>> = use_context();
     let ctx = ctx.unwrap();
     let chapter_count = use_book_chapter_count(props.translation.clone(), props.book.clone());
@@ -41,7 +44,7 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
                     }}
                 } else {
                     {for (0..num_chapters.unwrap_or(0)).map(|num| {
-                        html! { <LinkButton text={format!("{}", num+1)} route={Route::Chapter { translation: ctx.translation.clone(), book: props.book.to_string(), chapter: (num+1).to_string() }}></LinkButton> }
+                        html! { <LinkButton text={format!("{}", num+1)} route={Route::Chapter { translation: unwrapped_alt_routes.translation.clone(), book: props.book.to_string(), chapter: (num+1).to_string() }}></LinkButton> }
                     })}
                 }
             </LinkButtonContainer>

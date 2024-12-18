@@ -3,7 +3,7 @@ use serde::Serialize;
 use sqlx::prelude::*;
 use std::error::Error;
 
-/// Used to map one book to matching books of other translations.
+/// Used to list other translations of same book.
 #[derive(FromRow, Serialize)]
 pub struct TranslationRow {
     pub book_id: i32,
@@ -32,7 +32,7 @@ impl BackendState {
     ) -> Result<TranslationRow, Box<dyn Error>> {
         let mut mapping: TranslationRow = sqlx::query_as(
             r#"SELECT book_id, book_color, short_name,
-                full_name, language, translation,
+                full_name, language::TEXT, translation,
                 translation_description
             FROM books_view bv
             WHERE "translation"=$1 AND short_name=$2"#,
@@ -44,12 +44,13 @@ impl BackendState {
 
         let map_to: Vec<TranslationRow> = sqlx::query_as(
             r#"SELECT book_id, book_color, short_name,
-                full_name, language, translation,
+                full_name, language::TEXT, translation,
                 translation_description
             FROM books_view bv
-            WHERE book_id=$1"#,
+            WHERE book_id=$1 AND translation!=$2"#,
         )
         .bind(mapping.book_id)
+        .bind(from_translation)
         .fetch_all(&self.database_connection)
         .await?;
 

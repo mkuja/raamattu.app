@@ -23,7 +23,7 @@ impl DropDownMenuItem {
 
 #[derive(Properties, PartialEq)]
 pub struct DropDownProps {
-    pub items: Vec<DropDownMenuItem>,
+    pub items: UseStateHandle<Vec<DropDownMenuItem>>,
     pub name: AttrValue,
     pub id: AttrValue,
     pub on_change: Callback<Event>,

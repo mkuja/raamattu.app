@@ -2,8 +2,10 @@ use gloo_net::http::Request;
 use serde::{Deserialize, Serialize};
 use yew::platform::spawn_local;
 use yew::prelude::*;
+use yew_router::hooks::use_route;
 
 use crate::context::ApplicationOptions;
+use crate::hooks::use_cross_translations;
 
 #[derive(Deserialize, Serialize, Clone, PartialEq)]
 pub struct Book {
@@ -26,6 +28,7 @@ pub struct UseBookListStateVars {
 #[hook]
 pub fn use_book_list() -> UseBookListStateVars {
     let ctx = use_context::<UseStateHandle<ApplicationOptions>>().unwrap();
+    let route = use_route();
 
     // These ones are returned
     let book_list: UseStateHandle<Vec<Book>> = use_state(|| vec![]);
@@ -41,7 +44,6 @@ pub fn use_book_list() -> UseBookListStateVars {
 
     {
         // Make copies of the pointers for the effect
-        let ctx = ctx.clone();
         let book_list = book_list.clone();
 
         // Run when the context changes.
@@ -54,7 +56,9 @@ pub fn use_book_list() -> UseBookListStateVars {
                 let book_list_json = Request::get(
                     format!(
                         "{}{}{}",
-                        ctx.backend_base_url, "/book-list/by-translation/", ctx.translation
+                        ctx.backend_base_url,
+                        "/book-list/by-translation/",
+                        alt_routes_unwrapped.translation.as_str()
                     )
                     .as_str(),
                 )

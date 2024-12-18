@@ -4,7 +4,7 @@ use std::env::var;
 pub struct ApplicationOptions {
     /// Possible values are `"fi"` for Finnish and `"en"` for English.
     pub language: String,
-    pub translation: String,
+    // pub translation: String, // TODO: REMOVE FROM CTX AND ALL DEPS
     pub backend_base_url: String,
 }
 
@@ -12,7 +12,6 @@ impl Default for ApplicationOptions {
     fn default() -> Self {
         Self {
             language: "en".into(),
-            translation: "web".into(),
             backend_base_url: var("RAAMATTU_BACKEND_URL")
                 .unwrap_or("http://localhost:3000".to_string()),
         }
