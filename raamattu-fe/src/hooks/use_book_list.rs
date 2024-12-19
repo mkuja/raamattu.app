@@ -2,12 +2,10 @@ use gloo_net::http::Request;
 use serde::{Deserialize, Serialize};
 use yew::platform::spawn_local;
 use yew::prelude::*;
-use yew_router::hooks::use_route;
 
 use crate::context::ApplicationOptions;
-use crate::hooks::use_cross_translations;
 
-#[derive(Deserialize, Serialize, Clone, PartialEq)]
+#[derive(Deserialize, Debug, Serialize, Clone, PartialEq)]
 pub struct Book {
     pub book_id: i32,
     pub book_color: String,
@@ -18,7 +16,7 @@ pub struct Book {
     pub translation_description: String,
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct UseBookListStateVars {
     pub books: UseStateHandle<Vec<Book>>,
     pub is_loading: UseStateHandle<bool>,
@@ -26,9 +24,8 @@ pub struct UseBookListStateVars {
 }
 
 #[hook]
-pub fn use_book_list() -> UseBookListStateVars {
+pub fn use_book_list(selected_translation: &str) -> UseBookListStateVars {
     let ctx = use_context::<UseStateHandle<ApplicationOptions>>().unwrap();
-    let route = use_route();
 
     // These ones are returned
     let book_list: UseStateHandle<Vec<Book>> = use_state(|| vec![]);
@@ -42,14 +39,17 @@ pub fn use_book_list() -> UseBookListStateVars {
         error: error.clone(),
     };
 
-    {
-        // Make copies of the pointers for the effect
-        let book_list = book_list.clone();
+    // Make copies of the pointers for the effect
+    let book_list_copy = book_list.clone();
+    let selected_translation_s = selected_translation.to_string();
 
-        // Run when the context changes.
-        use_effect_with(ctx, move |ctx| {
+    // Run when the context changes.
+    use_effect_with(
+        (ctx, selected_translation_s),
+        move |(ctx, selected_translation)| {
             // Make copies for the async block
             let ctx = ctx.clone();
+            let translation = selected_translation.clone();
 
             spawn_local(async move {
                 is_loading.set(true);
@@ -58,7 +58,7 @@ pub fn use_book_list() -> UseBookListStateVars {
                         "{}{}{}",
                         ctx.backend_base_url,
                         "/book-list/by-translation/",
-                        alt_routes_unwrapped.translation.as_str()
+                        translation.as_str()
                     )
                     .as_str(),
                 )
@@ -68,7 +68,7 @@ pub fn use_book_list() -> UseBookListStateVars {
                 if let Ok(ok) = book_list_json {
                     let books = ok.json::<Vec<Book>>().await;
                     if let Ok(b) = books {
-                        book_list.set(b);
+                        book_list_copy.set(b);
                     } else {
                         error.set(Some("json_error".to_string()));
                     }
@@ -77,7 +77,7 @@ pub fn use_book_list() -> UseBookListStateVars {
                 };
                 is_loading.set(false);
             });
-        });
-    }
+        },
+    );
     returned
 }

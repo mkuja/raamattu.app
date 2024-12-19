@@ -18,8 +18,6 @@ pub struct ChapterPageProps {
 pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
     let alt_routes = use_cross_translations();
     let unwrapped_alt_routes = alt_routes.as_ref().unwrap();
-    let ctx: Option<UseStateHandle<ApplicationOptions>> = use_context();
-    let ctx = ctx.unwrap();
     let chapter_count = use_book_chapter_count(props.translation.clone(), props.book.clone());
     let num_chapters = chapter_count.num_chapters.clone();
     let is_loading = chapter_count.is_loading.clone();
@@ -30,11 +28,14 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
     let search_placeholder = use_translation("search_placeholder");
     let loading_msg = use_translation("is_loading");
 
+    // State var for holding the selected translation.
+    let selected_translation = use_state(|| "web".to_string());
+
     html! {
         <div class="container mx-auto container-lg px-8 flex flex-nowrap flex-col items-center justify-center">
             <Title title={title.get_translation()}/>
             <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />
-            <Options />
+            <Options {selected_translation} />
             <LinkButtonContainer class="grid grid-cols-4 md:grid-cols-6 gap-4 border-2 rounded-md p-4 border-hilight mt-2">
                 if *is_loading {
                     <span>{loading_msg.get_translation()}</span>

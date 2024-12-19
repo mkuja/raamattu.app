@@ -1,6 +1,7 @@
 mod query_book_list;
 mod query_book_meta;
 mod query_map_translation_book_names;
+mod query_translations;
 mod query_verses;
 
 pub use query_book_list::*;
@@ -8,6 +9,8 @@ pub use query_book_list::*;
 pub use query_book_meta::*;
 #[allow(unused)]
 pub use query_map_translation_book_names::*;
+#[allow(unused)]
+pub use query_translations::*;
 pub use query_verses::Chapter;
 
 use crate::error::LanguageError;

@@ -1,5 +1,4 @@
 use gloo_net::http::Request;
-use log::info;
 use serde::Deserialize;
 use yew::{platform::spawn_local, prelude::*};
 use yew_router::{hooks::use_route, Routable};

@@ -3,17 +3,17 @@ use yew::prelude::*;
 /**
  * A Vec of these must be provided for DropDown in props `items`
  */
-#[derive(Properties, PartialEq)]
+#[derive(Properties, PartialEq, Clone)]
 pub struct DropDownMenuItem {
-    pub value: AttrValue,
-    pub display_value: AttrValue,
+    pub value: String,
+    pub display_value: String,
 }
 
 impl DropDownMenuItem {
     /**
      * Create a new DropDownMenuItem
      */
-    pub fn new(value: impl Into<AttrValue>, display_value: impl Into<AttrValue>) -> Self {
+    pub fn new(value: impl Into<String>, display_value: impl Into<String>) -> Self {
         return Self {
             value: value.into(),
             display_value: display_value.into(),
@@ -23,7 +23,7 @@ impl DropDownMenuItem {
 
 #[derive(Properties, PartialEq)]
 pub struct DropDownProps {
-    pub items: UseStateHandle<Vec<DropDownMenuItem>>,
+    pub items: Vec<DropDownMenuItem>,
     pub name: AttrValue,
     pub id: AttrValue,
     pub on_change: Callback<Event>,
@@ -38,7 +38,7 @@ pub fn drop_down(props: &DropDownProps) -> Html {
         <select class="p-1 bg-secondary border-2 border-rim rounded-md" name={&props.name} id={&props.id} onchange={&props.on_change}>
             {for props.items.iter().map(|item| {
                 html!{
-                    <option value={&item.value}>{&item.display_value}</option>
+                    <option value={item.value.to_owned()}>{&item.display_value}</option>
                 }
             }).into_iter()}
         </select>

@@ -11,7 +11,7 @@ use tower_http::trace::TraceLayer;
 
 use handlers::{
     get_alternative_translations_for_book, get_book_list, get_chapter_verses,
-    get_num_chapters_for_book,
+    get_num_chapters_for_book, get_translations,
 };
 use state::*;
 
@@ -45,6 +45,7 @@ async fn main() {
             "/other-translations/:from_translation/:from_book",
             get(get_alternative_translations_for_book),
         )
+        .route("/translations", get(get_translations))
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .with_state(be_state);

@@ -2,7 +2,6 @@ use crate::{
     components::*,
     hooks::{use_chapter, use_translation},
 };
-use log::info;
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -69,10 +68,13 @@ pub fn chapter_view_page(props: &ChapterViewPageProps) -> Html {
         }
     };
 
+    // State var for holding the selected translation.
+    let selected_translation = use_state(|| "web".to_string());
+
     html! {
         <div class="container mb-4 mx-auto container-lg px-8 flex flex-wrap flex-col items-center justify-center">
             <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />
-            <Options />
+            <Options {selected_translation} />
             <Title {title}/>
 
             {content}
