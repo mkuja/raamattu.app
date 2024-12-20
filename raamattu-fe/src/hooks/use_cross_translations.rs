@@ -1,11 +1,11 @@
 use gloo_net::http::Request;
 use serde::Deserialize;
 use yew::{platform::spawn_local, prelude::*};
-use yew_router::{hooks::use_route, Routable};
+use yew_router::hooks::use_route;
 
 use crate::{context::ApplicationOptions, Route};
 
-#[derive(Deserialize, PartialEq)]
+#[derive(Deserialize, Clone, PartialEq)]
 pub struct AlternativeBookTranslations {
     pub book_id: i32,
     pub book_color: String,
@@ -35,16 +35,25 @@ impl AlternativeBookTranslations {
 }
 
 #[hook]
-pub fn use_cross_translations() -> UseStateHandle<Option<AlternativeBookTranslations>> {
+pub fn use_cross_translations(
+    current_choice_of_book: &str,
+) -> (
+    UseStateHandle<Option<AlternativeBookTranslations>>,
+    UseStateHandle<bool>,
+    UseStateHandle<Option<&'static str>>,
+) {
+    // TODO: Initial book from Route, and any changes from parameter
+
     // The return value
     let alternative_translations: UseStateHandle<Option<AlternativeBookTranslations>> =
         use_state(|| None);
-    let is_loading = use_state(|| false);
+    let is_loading = use_state(|| true);
     let error = use_state(|| None);
     let route: Option<Route> = use_route();
 
-    // current route parts. Used for request to be for corresponding translation books.
-    let route_parts = match route.unwrap() {
+    // Initial route parts come from the url.
+    let route_clone = route.clone();
+    let route_parts = use_state(|| match route_clone.unwrap() {
         Route::Chapters { translation, book } => Some((translation, book, None)),
         Route::Chapter {
             translation,
@@ -52,17 +61,37 @@ pub fn use_cross_translations() -> UseStateHandle<Option<AlternativeBookTranslat
             chapter,
         } => Some((translation, book, Some(chapter))),
         _ => None,
-    };
+    });
+
+    // And any changes to path are reflected from parameters.
+    let route_parts_clone = route_parts.clone();
+    let current_choice_of_book_s = current_choice_of_book.to_string();
+    let route_clone = route.as_ref().unwrap().clone();
+    use_effect_with(current_choice_of_book_s, move |b| {
+        route_parts_clone.set(match route_clone {
+            Route::Chapters { translation, book } => {
+                Some((translation.clone(), b.to_string(), None))
+            }
+            Route::Chapter {
+                translation,
+                book,
+                chapter,
+            } => Some((translation.clone(), b.to_string(), Some(chapter.clone()))),
+            _ => None,
+        });
+    });
+
     let ctx = use_context::<UseStateHandle<ApplicationOptions>>().unwrap();
 
     let is_loading_copy = is_loading.clone();
     let error_copy = error.clone();
     let alt_trans = alternative_translations.clone();
+    let route_parts_clone = route_parts.clone();
     use_effect_with((), move |_| {
         let is_loading_copy2 = is_loading_copy.clone();
         is_loading_copy.set(true);
         let ctx = ctx.clone();
-        let route_parts = route_parts.clone();
+        let route_parts_clone = route_parts_clone.clone();
         if route_parts.is_some() {
             spawn_local(async move {
                 let url = if route_parts.as_ref().unwrap().2.is_none() {
@@ -98,5 +127,5 @@ pub fn use_cross_translations() -> UseStateHandle<Option<AlternativeBookTranslat
         }
     });
 
-    alternative_translations
+    (alternative_translations, is_loading, error)
 }
