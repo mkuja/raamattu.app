@@ -2,7 +2,7 @@
 resolver = "2"
 members = [
     "raamattu-be",
-    "raamattu-fe",
+    "raamattu-fe", "raamattu-test",
 ]
 
 [profile.dev]

@@ -2,7 +2,7 @@
 services:
 
   raamattu-be:
-    build: .
+    build: raamattu-be
     ports:
       - "3000:3000"
     environment:
@@ -16,6 +16,28 @@ services:
       watch:
         - action: rebuild
           path: "./raamattu-be"
+
+  raamattu-fe:
+    build: raamattu-fe
+    ports: 
+      - "8080:8080"
+    volumes:
+      - ./:/app/
+    environment:
+      - RAAMATTU_BACKEND_URL=${RAAMATTU_BACKEND_URL}
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+    restart: always
+
+  selenium-server:
+    image: selenium/standalone-chrome:4.27.0-20241204
+    volumes:
+      - "/dev/shm:/dev/shm"
+    ports:
+      - "5900:5900"
+      - "4444:4444"
+      - "7900:7900"
 
   postgres:
     image: postgres:17.0
@@ -37,7 +59,7 @@ services:
 
   migration:
     build:
-      dockerfile: migrate.Dockerfile
+      dockerfile: db/migrate.Dockerfile
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
