@@ -17,6 +17,21 @@ pub struct AlternativeBookTranslations {
     pub matching: Option<Vec<AlternativeBookTranslations>>,
 }
 
+impl Default for AlternativeBookTranslations {
+    fn default() -> Self {
+        Self {
+            book_id: 0,
+            book_color: "#fff".to_string(),
+            short_name: "unknown".to_string(),
+            full_name: "unknown".to_string(),
+            language: "en".to_string(),
+            translation: "unknown".to_string(),
+            translation_description: "none".to_string(),
+            matching: None,
+        }
+    }
+}
+
 impl AlternativeBookTranslations {
     pub fn to_route(&self, chapter: Option<i32>) -> Route {
         if chapter.is_some() {

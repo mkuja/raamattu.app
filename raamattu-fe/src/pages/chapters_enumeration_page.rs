@@ -24,9 +24,19 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
         use_cross_translations(props.book.as_str());
     let alt_book = use_state(|| props.book.to_string());
     let alt_book_copy = alt_book.clone();
+    let allt_routes = alt_routes.clone();
+    let book_name = use_state(|| "lala".to_string());
+    let book_name_copy = book_name.clone();
+
+    use_effect_with((allt_routes, book_name_copy), move |(r, n)| {
+        if let Some(r) = r.as_ref() {
+            n.set(r.full_name.clone())
+        } else {
+        }
+    });
 
     // Filter the equilevant book name for this translation.
-    use_effect_with((alt_routes), move |(alt_routes)| {
+    use_effect_with(alt_routes, move |alt_routes| {
         if alt_routes.is_some() {
             if let Some(r) = (*alt_routes).as_ref().clone() {
                 let active_book = r.translation.clone();
@@ -75,6 +85,7 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
             <Title title={title.get_translation()}/>
             <Options {selected_translation} />
             <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />
+            <h2 class="font-cursive text-6xl w-fit mt-8 mb-4">{&(*book_name)}</h2>
             <LinkButtonContainer class="grid grid-cols-4 md:grid-cols-6 gap-4 border-2 rounded-md p-4 border-hilight mt-2">
                 if *is_loading {
                     <span>{loading_msg.get_translation()}</span>

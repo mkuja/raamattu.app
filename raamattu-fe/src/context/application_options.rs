@@ -13,7 +13,7 @@ impl Default for ApplicationOptions {
         Self {
             language: "en".into(),
             backend_base_url: var("RAAMATTU_BACKEND_URL")
-                .unwrap_or("http://localhost:3000".to_string()),
+                .unwrap_or("http://192.168.1.80:3000".to_string()),
         }
     }
 }
