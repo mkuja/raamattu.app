@@ -4,7 +4,7 @@ use std::error::Error;
 
 use crate::BackendState;
 
-#[derive(Serialize, FromRow)]
+#[derive(Serialize, Debug, FromRow)]
 pub struct Book {
     book_id: i32,
     book_color: String,

@@ -8,6 +8,12 @@ pub struct Translation {
     trans: String,
 }
 
+impl ToString for Translation {
+    fn to_string(&self) -> String {
+        self.trans.clone()
+    }
+}
+
 impl<'a> Translation {
     pub fn new(token: impl ToString, loc: String) -> Self {
         Self {

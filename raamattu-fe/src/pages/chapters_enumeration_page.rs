@@ -1,10 +1,30 @@
+use std::ops::Deref;
+
 use crate::{
     components::*,
-    hooks::{use_book_chapter_count, use_cross_translations, use_translation},
+    context::ApplicationOptions,
+    hooks::{
+        use_book_chapter_count, use_book_translations, use_cross_translations, use_translation,
+    },
     Route,
 };
+use gloo_net::http::Request;
 use log::warn;
-use yew::prelude::*;
+use serde::Deserialize;
+use yew::{platform::spawn_local, prelude::*};
+
+/// This is the type that is deserialized when asking for alternative names for a book name of a
+/// translation.
+#[derive(Deserialize, Debug)]
+pub struct Book {
+    book_id: i32,
+    book_color: String,
+    short_name: String,
+    full_name: String,
+    language: String,
+    translation: String,
+    translation_description: String,
+}
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct ChapterPageProps {
@@ -22,12 +42,18 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
     // translations, as their url is different.
     let (alt_routes, alt_translations_loading, alt_trans_error) =
         use_cross_translations(props.book.as_str());
+    let ar = alt_routes.clone();
+
+    // alt_book is the selected book from dropdown, and defaults to whatever comes from props.
     let alt_book = use_state(|| props.book.to_string());
     let alt_book_copy = alt_book.clone();
-    let allt_routes = alt_routes.clone();
-    let book_name = use_state(|| "lala".to_string());
-    let book_name_copy = book_name.clone();
 
+    // alt_routes contains route and its matching books of other translations.
+    let allt_routes = alt_routes.clone();
+
+    // Book name displayed on the page.
+    let book_name = use_state(|| "".to_string());
+    let book_name_copy = book_name.clone();
     use_effect_with((allt_routes, book_name_copy), move |(r, n)| {
         if let Some(r) = r.as_ref() {
             n.set(r.full_name.clone())
@@ -75,15 +101,65 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
     let search_placeholder = use_translation("search_placeholder");
     let loading_msg = use_translation("is_loading");
 
-    // State var for holding the selected translation.
+    // Resolve the other book name when another translation is selected from the select-menu.
     let trans = (*props.translation).to_string();
     let selected_translation = use_state(|| trans);
     let st1 = selected_translation.clone();
+    let ctx = use_context::<ApplicationOptions>();
+    let book = use_state(|| props.book.to_string());
+    let book2 = book.clone(); // Used twice in the html macro.
+    let bk = book.clone();
+    let server_error = use_state(|| None);
+    let is_server_error = server_error.is_some();
+    let translated_server_error = use_translation(server_error.unwrap_or("empty"));
+    {
+        // Translation is updated when user selects different translation on dropdown.
+        let ctx = ctx.clone();
+        let bk = bk.clone();
+        let st2 = selected_translation.clone();
+        let se = server_error.clone();
+
+        use_effect_with((bk, st2), move |(bk, st2)| {
+            let book = bk.clone();
+            let selected_translation = st2.clone();
+            let se = se.clone();
+            spawn_local(async move {
+                let resp = Request::get(
+                    format!(
+                        "{}/get-books-by-short-name/{}",
+                        ctx.unwrap_or_default().backend_base_url.as_str(),
+                        book.as_str()
+                    )
+                    .as_str(),
+                )
+                .send()
+                .await;
+
+                if let Ok(response) = resp {
+                    let deserialized = response.json::<Vec<Book>>().await;
+                    if let Ok(book_vec) = deserialized {
+                        book.set(
+                            book_vec
+                                .into_iter()
+                                .filter(|a| a.translation == **selected_translation)
+                                .collect::<Vec<Book>>()[0]
+                                .short_name
+                                .clone(),
+                        )
+                    } else {
+                        panic!("Pfft. This code should be unreachable, and it is a bug.")
+                    }
+                } else {
+                    se.set(Some("server_error"));
+                }
+            });
+        });
+    }
 
     html! {
         <div class="container mx-auto container-lg px-8 flex flex-nowrap flex-col items-center justify-center">
             <Title title={title.get_translation()}/>
-            <Options {selected_translation} />
+            <Options {selected_translation} selected_book={book} />
             <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />
             <h2 class="font-cursive text-6xl w-fit mt-8 mb-4">{&(*book_name)}</h2>
             <LinkButtonContainer class="grid grid-cols-4 md:grid-cols-6 gap-4 border-2 rounded-md p-4 border-hilight mt-2">
@@ -94,12 +170,16 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
                         <span>{error_msg.get_translation()}</span>
                     }}
                 } else {
-                    {for (0..(num_chapters.unwrap_or(0))).map(|num| {
-                        html! { <LinkButton text={format!("{}", num+1)}
-                            route={
-                                Route::Chapter { translation: st1.to_string(), book: alt_book.to_string(), chapter: (num+1).to_string() }
-                            } /> }
-                    })}
+                    if is_server_error {
+                         <p>{translated_server_error.to_string()}</p>
+                    } else {
+                        {for (0..(num_chapters.unwrap_or(0))).map(|num| {
+                            html! { <LinkButton text={format!("{}", num+1)}
+                                route={
+                                    Route::Chapter { translation: st1.to_string(), book: book2.deref().clone(), chapter: (num+1).to_string() }
+                                } /> }
+                        })}
+                    }
                 }
             </LinkButtonContainer>
         </div>

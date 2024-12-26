@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use web_sys::{self, wasm_bindgen::JsCast, HtmlSelectElement};
 use yew::prelude::*;
 
@@ -11,6 +13,8 @@ use crate::{
 pub struct OptionsProps {
     /// Used to lift the selected translations to parent component.
     pub selected_translation: UseStateHandle<String>,
+    #[prop_or_default]
+    pub selected_book: Option<UseStateHandle<String>>,
 }
 
 #[function_component(Options)]

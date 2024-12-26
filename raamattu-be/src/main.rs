@@ -10,8 +10,8 @@ use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::TraceLayer;
 
 use handlers::{
-    get_alternative_translations_for_book, get_book_list, get_chapter_verses,
-    get_num_chapters_for_book, get_translations,
+    get_alternative_translations_for_book, get_book_list, get_books_by_short_name,
+    get_chapter_verses, get_num_chapters_for_book, get_translations,
 };
 use state::*;
 
@@ -46,6 +46,11 @@ async fn main() {
             get(get_alternative_translations_for_book),
         )
         .route("/translations", get(get_translations))
+        .route(
+            "/get-books-by-short-name/:short_name",
+            get(get_books_by_short_name), // This one returns array of books having some short
+                                          // name.
+        )
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .with_state(be_state);
