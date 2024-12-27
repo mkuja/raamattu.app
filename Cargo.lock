@@ -2658,6 +2658,7 @@ name = "raamattu-fe"
 version = "0.1.0"
 dependencies = [
  "gloo-net 0.6.0",
+ "gloo-storage 0.3.0",
  "log",
  "rust-i18n",
  "serde",

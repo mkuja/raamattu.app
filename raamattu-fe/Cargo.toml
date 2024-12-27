@@ -15,6 +15,7 @@ rust-i18n = "3.1.2"
 serde = { version = "1", features = ["default", "derive", "std"] }
 serde_json = { version = "*" }
 gloo-net = { version = "*", features = ["http", "serde_json"] }
+gloo-storage = { version = "0.3" }
 wasm-bindgen-futures = "0.4"
 wasm-logger = "*"
 log = "*"
