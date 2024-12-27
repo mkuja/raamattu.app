@@ -52,12 +52,13 @@ pub fn use_cross_translations(
     let route_clone = route.as_ref().unwrap().clone();
     use_effect_with(current_choice_of_book_s, move |b| {
         route_parts_clone.set(match route_clone {
-            Route::Chapters { translation, book } => {
-                Some((translation.clone(), b.to_string(), None))
-            }
+            Route::Chapters {
+                translation,
+                book: _,
+            } => Some((translation.clone(), b.to_string(), None)),
             Route::Chapter {
                 translation,
-                book,
+                book: _,
                 chapter,
             } => Some((translation.clone(), b.to_string(), Some(chapter.clone()))),
             _ => None,
@@ -69,12 +70,10 @@ pub fn use_cross_translations(
     let is_loading_copy = is_loading.clone();
     let error_copy = error.clone();
     let alt_trans = alternative_translations.clone();
-    let route_parts_clone = route_parts.clone();
     use_effect_with((), move |_| {
         let is_loading_copy2 = is_loading_copy.clone();
         is_loading_copy.set(true);
         let ctx = ctx.clone();
-        let route_parts_clone = route_parts_clone.clone();
         if route_parts.is_some() {
             spawn_local(async move {
                 let url = if route_parts.as_ref().unwrap().2.is_none() {

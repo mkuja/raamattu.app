@@ -1,6 +1,5 @@
 use gloo_storage::{errors::StorageError, LocalStorage, Storage};
-use log::warn;
-use yew::{hook, use_context, use_effect_with, use_state, UseStateHandle};
+use yew::{hook, use_context, use_effect_with, UseStateHandle};
 
 use crate::context::ApplicationOptions;
 

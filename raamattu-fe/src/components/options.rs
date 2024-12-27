@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 use web_sys::{self, wasm_bindgen::JsCast, HtmlSelectElement};
 use yew::prelude::*;
 

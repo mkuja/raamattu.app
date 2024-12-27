@@ -3,9 +3,7 @@ use std::ops::Deref;
 use crate::{
     components::*,
     context::ApplicationOptions,
-    hooks::{
-        use_book_chapter_count, use_book_translations, use_cross_translations, use_translation,
-    },
+    hooks::{use_book_chapter_count, use_cross_translations, use_translation},
     Route,
 };
 use gloo_net::http::Request;
@@ -15,6 +13,7 @@ use yew::{platform::spawn_local, prelude::*};
 
 /// This is the type that is deserialized when asking for alternative names for a book name of a
 /// translation.
+#[allow(dead_code)] // Allowed, since this is what comes from the backend.
 #[derive(Deserialize, Debug)]
 pub struct Book {
     book_id: i32,
@@ -40,9 +39,8 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
 
     // Both routes and their alternative routes contains routes for alternative book and
     // translations, as their url is different.
-    let (alt_routes, alt_translations_loading, alt_trans_error) =
+    let (alt_routes, _alt_translations_loading, _alt_trans_error) =
         use_cross_translations(props.book.as_str());
-    let ar = alt_routes.clone();
 
     // alt_book is the selected book from dropdown, and defaults to whatever comes from props.
     let alt_book = use_state(|| props.book.to_string());
