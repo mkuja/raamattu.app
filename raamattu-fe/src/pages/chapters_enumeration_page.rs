@@ -155,12 +155,12 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
     }
 
     html! {
-        <div class="container mx-auto container-lg px-8 flex flex-nowrap flex-col items-center justify-center">
+        <div class="container mb-4 mx-auto max-w-screen-lg px-8 flex flex-nowrap flex-col items-center justify-center">
             <Title title={title.get_translation()}/>
             <Options {selected_translation} selected_book={book} />
             <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />
             <h2 class="font-cursive text-6xl w-fit mt-8 mb-4">{&(*book_name)}</h2>
-            <LinkButtonContainer class="grid grid-cols-4 md:grid-cols-6 gap-4 border-2 rounded-md p-4 border-hilight mt-2">
+            <LinkButtonContainer class="w-full border-2 border-hilight p-4 rounded-md gap-2 grid grid-cols-3 sm:grid-cols-5 md:grid-cols-10">
                 if *is_loading {
                     <span>{loading_msg.get_translation()}</span>
                 } else if error.is_some() {

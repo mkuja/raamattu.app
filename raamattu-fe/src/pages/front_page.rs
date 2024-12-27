@@ -24,7 +24,7 @@ pub fn front_page() -> Html {
     html! {
         <div class="container mb-4 mx-auto max-w-screen-lg px-8 flex flex-nowrap flex-col items-center justify-center">
             <Title title={title.get_translation()}/>
-            <Options selected_translation={selected_translation_for_options} />
+            <Options show_save_defaults={true} selected_translation={selected_translation_for_options} />
             <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />
             <BookList selected_translation={selected_translation_for_book_list} />
         </div>

@@ -78,16 +78,18 @@ pub fn options(props: &OptionsProps) -> Html {
     let save_changes = use_translation("save_changes");
 
     html! {
-        <div class="grid w-full mb-4 grid-cols-3 gap-4">
+        <div class={format!("grid w-full mb-4 gap-4 {}", if props.show_save_defaults {"grid-cols-3"} else {"grid-cols-2"})}>
             <div class="min-w-fit">
                 <DropDown class="h-full" name="lang" id="lang" items={(*lang_items).clone()} on_change={language_on_change} />
             </div>
             <div class="">
                 <DropDown class="h-full" name="trans" id="trans" items={(*trans_items).clone()} on_change={translation_on_change} />
             </div>
-            <div class="">
-                <button class="p-1 px-2 w-full bg-secondary border-2 border-rim rounded-md" type="submit">{save_changes.get_translation()}</button>
-            </div>
+            if props.show_save_defaults {
+                <div class="">
+                    <button class="p-1 px-2 w-full bg-secondary border-2 border-rim rounded-md" type="submit">{save_changes.get_translation()}</button>
+                </div>
+            }
         </div>
     }
 }
