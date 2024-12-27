@@ -6,7 +6,7 @@ use yew::prelude::*;
 use crate::{
     components::{DropDown, DropDownMenuItem},
     context::ApplicationOptions,
-    hooks::use_book_translations,
+    hooks::{use_book_translations, use_translation},
 };
 
 #[derive(Properties, Clone, PartialEq)]
@@ -15,6 +15,8 @@ pub struct OptionsProps {
     pub selected_translation: UseStateHandle<String>,
     #[prop_or_default]
     pub selected_book: Option<UseStateHandle<String>>,
+    #[prop_or_default]
+    pub show_save_defaults: bool,
 }
 
 #[function_component(Options)]
@@ -75,13 +77,18 @@ pub fn options(props: &OptionsProps) -> Html {
         selected_trans.set(trans);
     });
 
+    let save_changes = use_translation("save_changes");
+
     html! {
-        <div class="flex flex-row flex-nowrap gap-4">
-            <div class="mb-4">
-                <DropDown name="lang" id="lang" items={(*lang_items).clone()} on_change={language_on_change} />
+        <div class="grid w-full mb-4 grid-cols-3 gap-4">
+            <div class="min-w-fit">
+                <DropDown class="h-full" name="lang" id="lang" items={(*lang_items).clone()} on_change={language_on_change} />
             </div>
-            <div class="mb-4">
-                <DropDown name="trans" id="trans" items={(*trans_items).clone()} on_change={translation_on_change} />
+            <div class="">
+                <DropDown class="h-full" name="trans" id="trans" items={(*trans_items).clone()} on_change={translation_on_change} />
+            </div>
+            <div class="">
+                <button class="p-1 px-2 w-full bg-secondary border-2 border-rim rounded-md" type="submit">{save_changes.get_translation()}</button>
             </div>
         </div>
     }

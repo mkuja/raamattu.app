@@ -42,19 +42,24 @@ pub fn book_list(props: &BookListProps) -> Html {
 
     let loading_msg = use_translation("is_loading");
     let server_error_msg = use_translation("server_error");
-    let class: Option<String> = None;
+    let bible_books = use_translation("bible_books");
 
     html! {
-        <LinkButtonContainer {class}>
+        <>
+            <h2 class="font-cursive text-6xl mb-2">
+                {bible_books.get_translation()}
+            </h2>
+            <LinkButtonContainer class="w-full border-2 border-hilight p-4 rounded-md gap-2 grid md:grid-cols-2 lg:grid-cols-3">
 
-            if *is_loading.deref() {
-                <span>{loading_msg.get_translation()}</span>
-            } else if error.is_some() {
-                <span>{server_error_msg.get_translation()}</span>
-            } else {
-                {for book_list.deref().into_iter().map(|b|{html!{b.clone()}})}
-            }
+                if *is_loading.deref() {
+                    <span>{loading_msg.get_translation()}</span>
+                } else if error.is_some() {
+                    <span>{server_error_msg.get_translation()}</span>
+                } else {
+                    {for book_list.deref().into_iter().map(|b|{html!{b.clone()}})}
+                }
 
-        </LinkButtonContainer>
+            </LinkButtonContainer>
+        </>
     }
 }

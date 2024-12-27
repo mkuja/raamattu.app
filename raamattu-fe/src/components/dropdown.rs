@@ -27,6 +27,8 @@ pub struct DropDownProps {
     pub name: AttrValue,
     pub id: AttrValue,
     pub on_change: Callback<Event>,
+    #[prop_or_default]
+    pub class: AttrValue,
 }
 
 #[function_component(DropDown)]
@@ -35,7 +37,7 @@ pub struct DropDownProps {
  */
 pub fn drop_down(props: &DropDownProps) -> Html {
     html! {
-        <select class="p-1 bg-secondary border-2 border-rim rounded-md" name={&props.name} id={&props.id} onchange={&props.on_change}>
+        <select class={format!("p-1 w-full bg-secondary border-2 border-rim rounded-md {}", &props.class)} name={&props.name} id={&props.id} onchange={&props.on_change}>
             {for props.items.iter().map(|item| {
                 html!{
                     <option value={item.value.to_owned()}>{&item.display_value}</option>
