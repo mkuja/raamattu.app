@@ -16,13 +16,13 @@ use yew::{platform::spawn_local, prelude::*};
 #[allow(dead_code)] // Allowed, since this is what comes from the backend.
 #[derive(Deserialize, Debug)]
 pub struct Book {
-    book_id: i32,
-    book_color: String,
-    short_name: String,
-    full_name: String,
-    language: String,
-    translation: String,
-    translation_description: String,
+    pub book_id: i32,
+    pub book_color: String,
+    pub short_name: String,
+    pub full_name: String,
+    pub language: String,
+    pub translation: String,
+    pub translation_description: String,
 }
 
 #[derive(Properties, Clone, PartialEq)]
@@ -104,7 +104,7 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
     let server_error = use_state(|| None);
     let is_server_error = server_error.is_some();
     let translated_server_error = use_translation(server_error.unwrap_or("empty"));
-    use_effect_with((book_, book_name_copy), move |(bk, n)| {});
+    use_effect_with((book_, book_name_copy), move |(_bk, _n)| {});
     {
         // Translation is updated when user selects different translation on dropdown.
         let ctx = ctx.clone();

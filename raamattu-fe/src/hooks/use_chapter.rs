@@ -24,8 +24,8 @@ pub struct Chapter {
 
 #[hook]
 pub fn use_chapter(
-    translation: &str,
-    book: &str,
+    translation: UseStateHandle<AttrValue>,
+    book: UseStateHandle<AttrValue>,
     chapter: i32,
 ) -> (
     UseStateHandle<Option<Chapter>>,
