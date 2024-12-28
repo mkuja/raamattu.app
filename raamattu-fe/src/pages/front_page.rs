@@ -23,7 +23,7 @@ pub fn front_page() -> Html {
     use_effect_with((), |_| {});
 
     html! {
-        <div class="container mb-4 mx-auto max-w-screen-lg px-8 flex flex-nowrap flex-col items-center justify-center">
+        <div class="container lg:max-w-5xl mb-4 mx-auto max-w-screen-lg px-8 flex flex-nowrap flex-col items-center justify-center">
             <Title title={title.get_translation()}/>
             <Options show_save_defaults={true} selected_translation={selected_translation_for_options} />
             <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />

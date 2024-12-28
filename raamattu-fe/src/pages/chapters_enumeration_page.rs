@@ -160,7 +160,7 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
     }
 
     html! {
-        <div class="container mb-4 mx-auto max-w-screen-lg px-8 flex flex-nowrap flex-col items-center justify-center">
+        <div class="container lg:max-w-5xl mb-4 mx-auto max-w-screen-lg px-8 flex flex-nowrap flex-col items-center justify-center">
             <Title title={title.get_translation()}/>
             <Options selected_translation={selected_translation} selected_book={book.implicit_clone()} />
             <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />

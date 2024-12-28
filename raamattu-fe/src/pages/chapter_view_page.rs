@@ -135,7 +135,7 @@ pub fn chapter_view_page(props: &ChapterViewPageProps) -> Html {
 
     html! {
         <>
-            <div class="container mb-4 mx-auto container-lg px-8 flex flex-wrap flex-col items-center justify-center">
+            <div class="container lg:max-w-5xl mb-5 mx-auto container-lg px-8 flex flex-wrap flex-col items-center justify-center">
                 <Title title={title.get_translation()}/>
                 <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />
                 <Options selected_translation={translation_}/>
