@@ -1,6 +1,7 @@
 use crate::{components::*, context::ApplicationOptions, hooks::use_translation};
 use yew::{
-    function_component, html, use_context, use_effect_with, use_state, Html, UseStateHandle,
+    function_component, html, use_context, use_effect_with, use_state, AttrValue, Html,
+    UseStateHandle,
 };
 
 #[function_component(FrontPage)]
@@ -14,7 +15,7 @@ pub fn front_page() -> Html {
 
     // State var for holding the selected translation, which Options lifts up, and is passed down
     // to BookList.
-    let selected_translation = use_state(|| ctx.translation.clone());
+    let selected_translation = use_state::<AttrValue, _>(|| ctx.translation.clone().into());
     let selected_translation_for_options = selected_translation.clone();
     let selected_translation_for_book_list = selected_translation.clone();
 

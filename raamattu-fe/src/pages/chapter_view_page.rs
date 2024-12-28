@@ -7,6 +7,7 @@ use crate::{
     Book,
 };
 use gloo_net::http::Request;
+use html::{ImplicitClone, IntoPropValue};
 use log::warn;
 use yew::{platform::spawn_local, prelude::*};
 
@@ -21,9 +22,10 @@ pub struct ChapterViewPageProps {
 pub fn chapter_view_page(props: &ChapterViewPageProps) -> Html {
     // Initial translation and book come from props, and if translation is changed from the
     // select-menu, then updated here. Also alternative name for the book is being searched.
-    let translation = use_state(|| props.translation.to_string());
-    let book = use_state(|| props.book.to_string());
-    let header = use_state(|| props.book.to_string());
+    let translation = use_state(|| props.translation.implicit_clone());
+    let translation_ = translation.clone();
+    let book = use_state(|| props.book.implicit_clone());
+    let header = book.clone();
     {
         let book_ = book.clone();
         let translation_ = translation.clone();
@@ -57,8 +59,8 @@ pub fn chapter_view_page(props: &ChapterViewPageProps) -> Html {
                             .into_iter()
                             .find(|bk_| bk_.translation == *translation)
                             .unwrap();
-                        let short_name = the_book.short_name.clone();
-                        let full_name = the_book.full_name.clone();
+                        let short_name: AttrValue = the_book.short_name.into();
+                        let full_name: AttrValue = the_book.full_name.into();
                         println!("short_name: {}\nfull_name: {}", short_name, full_name);
                         header.set(full_name);
                         book.set(short_name);
@@ -126,7 +128,7 @@ pub fn chapter_view_page(props: &ChapterViewPageProps) -> Html {
     html! {
         <div class="container mb-4 mx-auto container-lg px-8 flex flex-wrap flex-col items-center justify-center">
             <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />
-            <Options selected_translation={translation} />
+            <Options selected_translation={translation_}/>
             <Title {title}/>
             <h2>{header.deref()}</h2>
             {content}

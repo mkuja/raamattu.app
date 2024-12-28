@@ -7,6 +7,7 @@ use crate::{
     Route,
 };
 use gloo_net::http::Request;
+use html::{ImplicitClone, IntoPropValue};
 use log::warn;
 use serde::Deserialize;
 use yew::{platform::spawn_local, prelude::*};
@@ -47,7 +48,7 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
     let alt_book_copy = alt_book.clone();
 
     // TODO: Comment what this var is
-    let book = use_state(|| props.book.to_string());
+    let book = use_state(|| props.book.implicit_clone());
 
     // Book name displayed on the page.
     let book_name = use_state(|| "".to_string());
@@ -95,7 +96,7 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
     let loading_msg = use_translation("is_loading");
 
     // Resolve the other book name when another translation is selected from the select-menu.
-    let trans = (*props.translation).to_string();
+    let trans = props.translation.implicit_clone();
     let selected_translation = use_state(|| trans);
     let st1 = selected_translation.clone();
     let ctx = use_context::<ApplicationOptions>();
@@ -144,7 +145,7 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
                                 }
                             })
                             .collect::<Vec<&Book>>()[0];
-                        let short_name = the_book.short_name.clone();
+                        let short_name: AttrValue = the_book.short_name.clone().into();
                         let full_name = the_book.full_name.clone();
                         book.set(short_name);
                         book_name_copy.set(full_name);
@@ -161,7 +162,7 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
     html! {
         <div class="container mb-4 mx-auto max-w-screen-lg px-8 flex flex-nowrap flex-col items-center justify-center">
             <Title title={title.get_translation()}/>
-            <Options {selected_translation} selected_book={book} />
+            <Options selected_translation={selected_translation} selected_book={book.implicit_clone()} />
             <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />
             <h2 class="font-cursive text-6xl w-fit mt-8 mb-4">{&(*book_name)}</h2>
             <LinkButtonContainer class="w-full border-2 border-hilight p-4 rounded-md gap-2 grid grid-cols-3 sm:grid-cols-5 md:grid-cols-10">
@@ -178,7 +179,7 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
                         {for (0..(num_chapters.unwrap_or(0))).map(|num| {
                             html! { <LinkButton text={format!("{}", num+1)}
                                 route={
-                                    Route::Chapter { translation: st1.to_string(), book: book2.deref().clone(), chapter: (num+1).to_string() }
+                                    Route::Chapter { translation: st1.to_string(), book: book2.deref().to_string(), chapter: (num+1).to_string() }
                                 } /> }
                         })}
                     }

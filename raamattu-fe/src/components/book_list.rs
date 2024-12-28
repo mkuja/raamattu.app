@@ -11,7 +11,7 @@ use crate::Route;
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct BookListProps {
-    pub selected_translation: UseStateHandle<String>,
+    pub selected_translation: UseStateHandle<AttrValue>,
 }
 
 #[function_component(BookList)]

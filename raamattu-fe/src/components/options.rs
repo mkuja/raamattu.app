@@ -10,9 +10,9 @@ use crate::{
 #[derive(Properties, Clone, PartialEq)]
 pub struct OptionsProps {
     /// Used to lift the selected translations to parent component.
-    pub selected_translation: UseStateHandle<String>,
+    pub selected_translation: UseStateHandle<AttrValue>,
     #[prop_or_default]
-    pub selected_book: Option<UseStateHandle<String>>,
+    pub selected_book: Option<AttrValue>,
     #[prop_or_default]
     pub show_save_defaults: bool,
 }
@@ -72,7 +72,7 @@ pub fn options(props: &OptionsProps) -> Html {
             .ok()
             .unwrap()
             .value();
-        selected_trans.set(trans);
+        selected_trans.set(trans.into());
     });
 
     let save_changes = use_translation("save_changes");
