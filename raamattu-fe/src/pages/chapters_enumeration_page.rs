@@ -46,20 +46,15 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
     let alt_book = use_state(|| props.book.to_string());
     let alt_book_copy = alt_book.clone();
 
-    // alt_routes contains route and its matching books of other translations.
-    let allt_routes = alt_routes.clone();
+    // TODO: Comment what this var is
+    let book = use_state(|| props.book.to_string());
 
     // Book name displayed on the page.
     let book_name = use_state(|| "".to_string());
-    let book_name_copy = book_name.clone();
-    use_effect_with((allt_routes, book_name_copy), move |(r, n)| {
-        if let Some(r) = r.as_ref() {
-            n.set(r.full_name.clone())
-        } else {
-        }
-    });
+    let book_ = book.clone();
 
-    // Filter the equilevant book name for this translation.
+    // Filter the equilevant book name for this translation to use in the links.
+    let book_name_copy = book_name.clone();
     use_effect_with(alt_routes, move |alt_routes| {
         if alt_routes.is_some() {
             if let Some(r) = (*alt_routes).as_ref().clone() {
@@ -104,18 +99,21 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
     let selected_translation = use_state(|| trans);
     let st1 = selected_translation.clone();
     let ctx = use_context::<ApplicationOptions>();
-    let book = use_state(|| props.book.to_string());
     let book2 = book.clone(); // Used twice in the html macro.
     let bk = book.clone();
     let server_error = use_state(|| None);
     let is_server_error = server_error.is_some();
     let translated_server_error = use_translation(server_error.unwrap_or("empty"));
+    use_effect_with((book_, book_name_copy), move |(bk, n)| {});
     {
         // Translation is updated when user selects different translation on dropdown.
         let ctx = ctx.clone();
         let bk = bk.clone();
         let st2 = selected_translation.clone();
         let se = server_error.clone();
+
+        // Book name displayed on the page.
+        let book_name_copy = book_name.clone();
 
         use_effect_with((bk, st2), move |(bk, st2)| {
             let book = bk.clone();
@@ -136,16 +134,22 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
                 if let Ok(response) = resp {
                     let deserialized = response.json::<Vec<Book>>().await;
                     if let Ok(book_vec) = deserialized {
-                        book.set(
-                            book_vec
-                                .into_iter()
-                                .filter(|a| a.translation == **selected_translation)
-                                .collect::<Vec<Book>>()[0]
-                                .short_name
-                                .clone(),
-                        )
+                        let the_book = book_vec
+                            .iter()
+                            .filter_map(|a| {
+                                if a.translation == *selected_translation {
+                                    Some(a)
+                                } else {
+                                    None
+                                }
+                            })
+                            .collect::<Vec<&Book>>()[0];
+                        let short_name = the_book.short_name.clone();
+                        let full_name = the_book.full_name.clone();
+                        book.set(short_name);
+                        book_name_copy.set(full_name);
                     } else {
-                        panic!("Pfft. This code should be unreachable, and it is a bug.")
+                        panic!("Pfft. This code should be unreachable, and it is a bug.");
                     }
                 } else {
                     se.set(Some("server_error"));
