@@ -7,7 +7,7 @@ use crate::{
     Route,
 };
 use gloo_net::http::Request;
-use html::{ImplicitClone, IntoPropValue};
+use html::ImplicitClone;
 use log::warn;
 use serde::Deserialize;
 use yew::{platform::spawn_local, prelude::*};
