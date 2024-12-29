@@ -20,3 +20,8 @@ wasm-bindgen-futures = "0.4"
 wasm-logger = "*"
 log = "*"
 wasm-bindgen = "*"
+yew_icons = { version = "0.8", features = [
+  "HeroiconsSolidHome",
+  "HeroiconsSolidBackward",
+  "HeroiconsSolidForward",
+] }

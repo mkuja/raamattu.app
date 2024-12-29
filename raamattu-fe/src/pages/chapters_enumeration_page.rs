@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 use crate::{
     components::*,
     context::ApplicationOptions,
@@ -10,7 +8,10 @@ use gloo_net::http::Request;
 use html::ImplicitClone;
 use log::warn;
 use serde::Deserialize;
+use std::ops::Deref;
 use yew::{platform::spawn_local, prelude::*};
+use yew_icons::IconId;
+use yew_router::prelude::*;
 
 /// This is the type that is deserialized when asking for alternative names for a book name of a
 /// translation.
@@ -94,6 +95,7 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
     let title = use_translation("site_title");
     let search_placeholder = use_translation("search_placeholder");
     let loading_msg = use_translation("is_loading");
+    let home_translation = use_translation("home_link");
 
     // Resolve the other book name when another translation is selected from the select-menu.
     let trans = props.translation.implicit_clone();
@@ -164,7 +166,15 @@ pub fn chapters_enumeration_page(props: &ChapterPageProps) -> Html {
             <Title title={title.get_translation()}/>
             <Options selected_translation={selected_translation} selected_book={book.implicit_clone()} />
             <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />
-            <h2 class="font-cursive text-6xl w-fit mt-8 mb-4">{&(*book_name)}</h2>
+            <div class="flex flex-wrap justify-between items-baseline w-full">
+                <Link<Route> to={Route::Root}>
+                    <Button svg_icon={IconId::HeroiconsSolidHome}
+                        text={home_translation.get_translation()}
+                        btype={ButtonType::Primary}/>
+                </Link<Route>>
+                <h2 class="font-cursive justify-self-center mr-20 sm:mr-0 text-6xl w-fit mt-8 mb-4">{&(*book_name)}</h2>
+                <div></div>
+            </div>
             <LinkButtonContainer class="w-full border-2 border-hilight p-4 rounded-md gap-2 grid grid-cols-3 sm:grid-cols-5 md:grid-cols-10">
                 if *is_loading {
                     <span>{loading_msg.get_translation()}</span>

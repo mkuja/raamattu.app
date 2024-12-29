@@ -9,9 +9,9 @@ mod rim;
 mod search_bar;
 mod title;
 
-// unused currently. pub use button::*;
 #[allow(unused)]
 pub use book_list::*;
+pub use button::*;
 pub use dropdown::*;
 #[allow(unused)]
 pub use link_button::{LinkButton, LinkButtonProps};

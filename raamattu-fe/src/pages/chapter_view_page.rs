@@ -1,11 +1,13 @@
-use std::ops::Deref;
-
-use crate::{components::*, context::ApplicationOptions, hooks::use_translation, Book};
+use crate::components::{Button, ButtonType};
+use crate::{components::*, context::ApplicationOptions, hooks::use_translation, Book, Route};
 use gloo_net::http::Request;
 use html::ImplicitClone;
 use log::warn;
 use serde::Deserialize;
-use yew::{platform::spawn_local, prelude::*};
+use yew::platform::spawn_local;
+use yew::prelude::*;
+use yew_icons::IconId;
+use yew_router::prelude::*;
 
 #[derive(PartialEq, Deserialize, Debug)]
 pub struct Verse {
@@ -23,6 +25,11 @@ pub struct Chapter {
     pub translation_description: String,
     pub translation_name: String,
     pub verses: Vec<Verse>,
+}
+
+#[derive(Deserialize)]
+struct NumChapters {
+    pub num_chapters: i32,
 }
 
 #[derive(Clone, Properties, PartialEq)]
@@ -132,6 +139,72 @@ pub fn chapter_view_page(props: &ChapterViewPageProps) -> Html {
     let search_placeholder = use_translation("search_placeholder");
     let server_error = use_translation("server_error");
     let title = use_translation("site_title");
+    let next_chap_translation = use_translation("next_chapter");
+    let prev_chap_translation = use_translation("prev_chapter");
+    let home_translation = use_translation("home_link");
+
+    // Disable prev and next links to prevent them going out of range.
+    let next_link_is_disabled = use_state(|| true);
+    let prev_link_is_disabled = use_state(|| true);
+    let chapter_number_ = chapter_number;
+    // Errors and helpers
+    let chapter_count_error: UseStateHandle<Option<&'static str>> = use_state(|| None);
+    let number_of_chapters_in_book = use_state(|| 0);
+    let number_of_chapters_in_book_ = number_of_chapters_in_book.clone();
+    // Ptrs to be moved to the closure
+    let ctx = use_context::<UseStateHandle<ApplicationOptions>>().unwrap();
+    let translation__ = translation.clone();
+    let book_ = book.clone();
+    let prev_link_is_disabled_ = prev_link_is_disabled.clone();
+    let next_link_is_disabled_ = next_link_is_disabled.clone();
+    use_effect_with((), move |_| {
+        let number_of_chapters_in_book = number_of_chapters_in_book_.clone();
+        let ctx = ctx.clone();
+        let translation = translation__.clone();
+        let book = book_.clone();
+        spawn_local(async move {
+            let response = Request::get(
+                format!(
+                    "{}/chapter-list/{}/{}",
+                    ctx.backend_base_url,
+                    translation.as_str(),
+                    book.as_str()
+                )
+                .as_str(),
+            )
+            .send()
+            .await;
+
+            if let Ok(response) = response {
+                let num_chapters = response.json::<NumChapters>().await;
+
+                if let Ok(num_chapters) = num_chapters {
+                    number_of_chapters_in_book.set(num_chapters.num_chapters)
+                } else {
+                    panic!("Chapter view page can't parse chapter count for a chapter.")
+                }
+            } else {
+                chapter_count_error.set(Some("json_error"));
+            }
+        });
+    });
+    let number_of_chapters_in_book_ = number_of_chapters_in_book.clone();
+    use_effect_with(
+        (chapter_number_, number_of_chapters_in_book_),
+        move |(chapter_number, number_of_chapters_in_book_)| {
+            if chapter_number <= &1 {
+                prev_link_is_disabled_.set(true);
+            } else {
+                prev_link_is_disabled_.set(false);
+            }
+
+            if chapter_number >= &*number_of_chapters_in_book_ {
+                next_link_is_disabled_.set(true);
+            } else {
+                next_link_is_disabled_.set(false);
+            }
+        },
+    );
 
     html! {
         <>
@@ -139,7 +212,37 @@ pub fn chapter_view_page(props: &ChapterViewPageProps) -> Html {
                 <Title title={title.get_translation()}/>
                 <SearchBar placeholder={search_placeholder.get_translation()} button_text="Search" />
                 <Options selected_translation={translation_}/>
-                <Title title={header.implicit_clone()}/>
+                <div class="flex flex-wrap justify-between items-baseline w-full">
+                    <Link<Route> to={Route::Root}>
+                        <Button svg_icon={IconId::HeroiconsSolidHome}
+                            text={home_translation.get_translation()}
+                            btype={ButtonType::Primary}/>
+                    </Link<Route>>
+                    <Title title={header.implicit_clone()}/>
+                    <div class="flex flex-wrap-reverse gap-4">
+                        <Link<Route>
+                            to={Route::Chapter {
+                                translation: translation.to_string(),
+                                book: book.to_string(),
+                                chapter: (chapter_number-1).to_string()
+                        }}><Button
+                            svg_icon={IconId::HeroiconsSolidBackward}
+                            text={prev_chap_translation.get_translation()}
+                            btype={ButtonType::Primary}
+                            disabled={*prev_link_is_disabled}/>
+                        </Link<Route>>
+                        <Link<Route>
+                            to={Route::Chapter {
+                                translation: translation.to_string(),
+                                book: book.to_string(),
+                                chapter: (chapter_number+1).to_string()
+                        }}><Button
+                            svg_icon={IconId::HeroiconsSolidForward}
+                            text={next_chap_translation.get_translation()}
+                            btype={ButtonType::Primary}
+                            disabled={*next_link_is_disabled}/></Link<Route>>
+                    </div>
+                </div>
 
             // Generate the content
             if *is_loading {

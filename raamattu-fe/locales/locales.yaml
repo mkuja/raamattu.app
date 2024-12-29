@@ -39,3 +39,15 @@ save_changes:
 bible_books:
   fi: Raamatun kirjat
   en: Books of The Bible
+
+next_chapter:
+  fi: Seuraava luku
+  en: Next chapter
+
+prev_chapter:
+  fi: Edellinen luku
+  en: Previous chapter
+
+home_link:
+  fi: Aloitussivulle
+  en: Home
