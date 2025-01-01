@@ -32,22 +32,25 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(|| async { "Hello" }))
-        .route("/book-list/by-translation/:translation", get(get_book_list))
         .route(
-            "/chapter-list/:translation/:book",
+            "/book-list/by-translation/{translation}",
+            get(get_book_list),
+        )
+        .route(
+            "/chapter-list/{translation}/{book}",
             get(get_num_chapters_for_book),
         )
         .route(
-            "/chapter/:translation/:book/:chapter",
+            "/chapter/{translation}/{book}/{chapter}",
             get(get_chapter_verses),
         )
         .route(
-            "/other-translations/:from_translation/:from_book",
+            "/other-translations/{from_translation}/{from_book}",
             get(get_alternative_translations_for_book),
         )
         .route("/translations", get(get_translations))
         .route(
-            "/get-books-by-short-name/:short_name",
+            "/get-books-by-short-name/{short_name}",
             get(get_books_by_short_name), // This one returns array of books having some short
                                           // name.
         )
