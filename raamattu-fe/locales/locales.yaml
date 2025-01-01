@@ -51,3 +51,8 @@ prev_chapter:
 home_link:
   fi: Aloitussivulle
   en: Home
+
+saved_msg:
+  fi: Tallennettu..
+  en: Saved..
+

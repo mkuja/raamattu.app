@@ -42,7 +42,6 @@ pub struct ChapterViewPageProps {
 #[function_component(ChapterViewPage)]
 pub fn chapter_view_page(props: &ChapterViewPageProps) -> Html {
     // For showing chapter name, loading msg and possible error.
-    let chapter_name = use_state(|| "downloading");
     let is_loading = use_state(|| true);
     let la_error: UseStateHandle<Option<&'static str>> = use_state(|| None);
 
@@ -100,7 +99,7 @@ pub fn chapter_view_page(props: &ChapterViewPageProps) -> Html {
                                 .unwrap();
                             let short_name: AttrValue = the_book.short_name.into();
                             let full_name: AttrValue = the_book.full_name.into();
-                            header.set(format!("{} {}", full_name, props.chapter).into());
+                            header.set(format!("{}, {}", full_name, props.chapter).into());
                             book.set(short_name);
                         }
                     }

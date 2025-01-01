@@ -1,7 +1,7 @@
-use std::ops::Deref;
-
+use gloo::timers::callback::Timeout;
 use gloo_storage::{LocalStorage, Storage};
 use log::{info, warn};
+use std::ops::Deref;
 use web_sys::{self, wasm_bindgen::JsCast, HtmlSelectElement};
 use yew::prelude::*;
 
@@ -115,16 +115,30 @@ pub fn options(props: &OptionsProps) -> Html {
     });
 
     let save_changes = use_translation("save_changes");
+    let saved_msg = use_translation("saved_msg");
 
-    // Save save settings
+    // Save settings
     let ctx_ = ctx.clone();
+    let timeout_callback_stash = use_state(|| None);
+    let show_saved_message = use_state(|| false);
+    let reset_msg = use_state(|| {
+        let show_saved_message_ = show_saved_message.clone();
+        move || {
+            show_saved_message_.set(false);
+        }
+    });
+    let show_saved_message_ = show_saved_message.clone();
     let onclick = Callback::from(move |_ev: MouseEvent| {
+        let reset_msg_ = reset_msg.clone();
         let success = LocalStorage::set("settings", (*ctx_).clone());
         if let Ok(_success) = success {
             info!("Saved settings: {}", *ctx_);
         } else {
             info!("Could not save settings..");
         }
+        show_saved_message_.set(true);
+        let timeout = Timeout::new(2000, (*reset_msg_).clone());
+        timeout_callback_stash.set(Some(timeout));
     });
 
     html! {
@@ -137,7 +151,11 @@ pub fn options(props: &OptionsProps) -> Html {
             </div>
             if props.show_save_defaults {
                 <div class="">
-                    <button onclick={&onclick} class="p-1 px-2 w-full bg-secondary border-2 border-rim rounded-md" type="button">{save_changes.get_translation()}</button>
+                    if *show_saved_message {
+                        <button onclick={&onclick} class="p-1 px-2 w-full bg-hilight border-2 border-rim rounded-md" type="button">{saved_msg.get_translation()}</button>
+                    } else {
+                        <button onclick={&onclick} class="p-1 px-2 w-full bg-secondary border-2 border-rim rounded-md" type="button">{save_changes.get_translation()}</button>
+                    }
                 </div>
             }
         </div>

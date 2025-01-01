@@ -25,3 +25,4 @@ yew_icons = { version = "0.8", features = [
   "HeroiconsSolidBackward",
   "HeroiconsSolidForward",
 ] }
+gloo = { version = "0.11" }
