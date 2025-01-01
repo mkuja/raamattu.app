@@ -1,8 +1,9 @@
+use std::ops::Deref;
+
 use crate::components::{Button, ButtonType};
 use crate::{components::*, context::ApplicationOptions, hooks::use_translation, Book, Route};
 use gloo_net::http::Request;
 use html::ImplicitClone;
-use log::warn;
 use serde::Deserialize;
 use yew::platform::spawn_local;
 use yew::prelude::*;
@@ -44,6 +45,29 @@ pub fn chapter_view_page(props: &ChapterViewPageProps) -> Html {
     // For showing chapter name, loading msg and possible error.
     let is_loading = use_state(|| true);
     let la_error: UseStateHandle<Option<&'static str>> = use_state(|| None);
+
+    let decrease_font_size_tr = use_translation("decr_font_size");
+    let increase_font_size_tr = use_translation("incr_font_size");
+    let font_sizes = ["text-xs", "text-sm", "text-base", "text-lg", "text-xl"];
+    let font_size = use_state(|| 2);
+    let font_size_ = font_size.clone();
+    let increase_font_size: Callback<MouseEvent, _> = Callback::from(move |_ev| {
+        font_size_.set(*font_size_ + 1);
+    });
+    let font_size_ = font_size.clone();
+    let decrease_font_size: Callback<MouseEvent, _> = Callback::from(move |_ev| {
+        font_size_.set(*font_size_ - 1);
+    });
+    let font_size_ = font_size.clone();
+    let increase_font_size_is_disabled = || *font_size_ >= 4;
+    let decrease_font_size_is_disabled = || *font_size_ <= 0;
+
+    let font_size_class = use_state(|| "font-base");
+    let font_size_class_ = font_size_class.clone();
+    let font_size_ = font_size.clone();
+    use_effect_with(font_size_, move |font_size| {
+        font_size_class_.set(font_sizes[font_size.deref().clone()]);
+    });
 
     // Initial translation and book come from props, and if translation is changed from the
     // select-menu, then updated here. Also alternative name for the book is being searched.
@@ -88,10 +112,8 @@ pub fn chapter_view_page(props: &ChapterViewPageProps) -> Html {
 
                     if let Ok(response) = response {
                         let books = response.json::<Vec<Book>>().await;
-                        warn!("got books response.");
 
                         if let Ok(books) = books {
-                            warn!("Books were okkay");
                             // Find the book of the correct translation.
                             let the_book = books
                                 .into_iter()
@@ -119,13 +141,10 @@ pub fn chapter_view_page(props: &ChapterViewPageProps) -> Html {
                         // Parse to struct
                         let chp = response.json::<Chapter>().await;
 
-                        warn!("Attermpting to set chapter and loading");
                         if let Ok(chp) = chp {
-                            warn!("Setting chapter and loading");
                             chapter.set(Some(chp));
                             is_loading.set(false);
                         } else {
-                            warn!("{}", chp.unwrap_err());
                         }
                     }
                 });
@@ -241,6 +260,22 @@ pub fn chapter_view_page(props: &ChapterViewPageProps) -> Html {
                             btype={ButtonType::Primary}
                             disabled={*next_link_is_disabled}/></Link<Route>>
                     </div>
+                    <div class="flex gap-4 mt-4">
+                        <div class="m-0" onclick={increase_font_size}>
+                            <Button
+                                svg_icon={IconId::HeroiconsOutlineMagnifyingGlassPlus}
+                                text={increase_font_size_tr.get_translation()}
+                                btype={ButtonType::Secondary}
+                                disabled={increase_font_size_is_disabled()} />
+                        </div>
+                        <div class="m-0" onclick={decrease_font_size}>
+                            <Button
+                                svg_icon={IconId::HeroiconsOutlineMagnifyingGlassMinus}
+                                text={decrease_font_size_tr.get_translation()}
+                                btype={ButtonType::Secondary}
+                                disabled={decrease_font_size_is_disabled()} />
+                        </div>
+                    </div>
                 </div>
 
             // Generate the content
@@ -255,16 +290,18 @@ pub fn chapter_view_page(props: &ChapterViewPageProps) -> Html {
             } else {
                 {html! {
                 <Rim>
+                    <div class={format!("text-justify {}", *font_size_class)}>
                     {for
                         (*chapter).as_ref().unwrap().verses.iter().map(|verse| {
                             html! {
-                                <>
+                                <span>
                                     <span class="inline-block py-0.5 px-1 bg-secondary align-super font-bold text-xs ml-4 mr-1">{verse.verse_number}</span>
-                                    <p class="inline text-justify">{&verse.verse_text}</p>
-                                </>
+                                    <p class="inline">{&verse.verse_text}</p>
+                                </span>
                             }
                         }).collect::<Vec<_>>()
                     }
+                    </div>
                 </Rim>}}
             }
             </div>

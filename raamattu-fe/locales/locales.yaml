@@ -56,3 +56,10 @@ saved_msg:
   fi: Tallennettu..
   en: Saved..
 
+incr_font_size:
+  fi: Isompi fontti
+  en: Larger font
+
+decr_font_size:
+  fi: Pienempi fontti
+  en: Smaller font
