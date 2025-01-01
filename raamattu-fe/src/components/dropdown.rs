@@ -7,16 +7,19 @@ use yew::prelude::*;
 pub struct DropDownMenuItem {
     pub value: String,
     pub display_value: String,
+    #[prop_or_default]
+    pub selected: bool,
 }
 
 impl DropDownMenuItem {
     /**
      * Create a new DropDownMenuItem
      */
-    pub fn new(value: impl Into<String>, display_value: impl Into<String>) -> Self {
+    pub fn new(value: impl Into<String>, display_value: impl Into<String>, selected: bool) -> Self {
         return Self {
             value: value.into(),
             display_value: display_value.into(),
+            selected,
         };
     }
 }
@@ -37,10 +40,14 @@ pub struct DropDownProps {
  */
 pub fn drop_down(props: &DropDownProps) -> Html {
     html! {
-        <select class={format!("p-1 w-full bg-secondary border-2 border-rim rounded-md {}", &props.class)} name={&props.name} id={&props.id} onchange={&props.on_change}>
+        <select class={format!("p-1 w-full bg-secondary border-2 border-rim rounded-md {}",
+            &props.class)}
+            name={&props.name}
+            id={&props.id}
+            onchange={&props.on_change}>
             {for props.items.iter().map(|item| {
                 html!{
-                    <option value={item.value.to_owned()}>{&item.display_value}</option>
+                    <option selected={item.selected} value={item.value.to_owned()}>{&item.display_value}</option>
                 }
             }).into_iter()}
         </select>
